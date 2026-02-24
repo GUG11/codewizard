@@ -1,0 +1,14 @@
+[user]
+	name = GUG11
+	email = hyzhang2112@gmail.com
+[push]
+	default = current
+
+[alias]
+	# Unified branch graph
+	sl = log --graph --decorate --pretty=format:'%C(auto)%h%d %s %C(blue)(%cr) %C(green)<%an>' --abbrev-commit --all
+	# Compare commits + line-by-line patch vs origin/master
+	cmp = "!git log --left-right --cherry-pick --graph --oneline HEAD...origin/master && echo && git diff origin/master...HEAD"
+
+[core]
+	editor = vim
