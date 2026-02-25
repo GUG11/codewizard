@@ -47,3 +47,6 @@ echo "- ${TARGET_DIR}/AGENTS.md"
 if [[ "${BACKED_UP}" -eq 1 ]]; then
   echo "Backup created at ${BACKUP_DIR}"
 fi
+
+sudo apt install npm -y
+sudo npm install -g @openai/codex
