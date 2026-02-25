@@ -1,0 +1,15 @@
+{
+    "vim.insertModeKeyBindings": [
+        {
+            "before": ["j", "k"],
+            "after": ["<Esc>"]
+        }
+    ],
+    "vim.useSystemClipboard": true,
+    "workbench.editor.wrapTabs": false,
+    "workbench.colorTheme": "Default High Contrast",
+    "AI.hasShownMoreActionTip": true,
+    "terminal.integrated.scrollback": 200000,
+    "editor.stickyScroll.enabled": true,
+    "editor.fontSize": 12
+}
