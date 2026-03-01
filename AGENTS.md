@@ -1,3 +1,10 @@
+# Repository AGENTS
+
+Team setup is managed by `agents/team/scripts/init_repo_team.py`, which installs
+official multi-agent runtime configuration under `.codex/`.
+
+## Global Baseline (from /Users/bytedance/.codex/AGENTS.md)
+
 # General Coding Guidelines
 ## Rule Priority
 - Apply rules in this order when conflicts exist:
@@ -52,7 +59,7 @@
 # Summary
 - Purpose:
 
-## Key Changes
+# Key Changes
 1.
 2.
 3.
@@ -80,20 +87,13 @@ To be completed by engineer.
 - Introducing new packages or dependencies.
 - Overprotective coding with excessive checks or broad `try/except` blocks.
 
-## Skills
-### Skill Paths
-- Primary skill location: `~/.codex/skills/`
-- Installed by deploy script:
-- `~/.codex/skills/code-review-expert-main/SKILL.md`
+## Team Routing Rules
+- Default user-facing entrypoint is `Planner`.
+- Route explicit implementation requests to `Implementer`.
+- Route runtime validation or execution-backed review requests to `Validator`.
+- All roles must comply with the Global Baseline section above.
 
-### Skill Trigger Rules
-- Use `code-review-expert` (folder: `code-review-expert-main`) only for diff-based code review on current code changes.
-- Default review mode is review-only (no code edits) unless the user explicitly asks for fixes.
-- Prioritize findings by severity (`P0` to `P3`) and provide actionable file/line guidance.
-- If there are no findings, explicitly state what was checked and residual risk.
-
-### Skill Coordination
-- If review and implementation are requested together, run in this order:
-1. `code-review-expert` for diff review findings.
-2. Implement fixes only for user-approved findings.
-3. Re-run `code-review-expert` to confirm closure.
+## Agent Locations In This Repo
+- `.codex/agents/planner.md`
+- `.codex/agents/implementer.md`
+- `.codex/agents/validator.md`

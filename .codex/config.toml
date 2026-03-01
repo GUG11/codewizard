@@ -1,0 +1,25 @@
+# Project-scoped Codex configuration (official multi-agent pattern)
+model = "gpt-5.3-codex"
+model_instructions_file = ".codex/instructions/AGENTS.md"
+
+[features]
+multi_agent = true
+
+[agents]
+max_depth = 2
+
+[agents.planner]
+description = "Create unambiguous plans with one-task-one-file decomposition."
+config_file = ".codex/agents/planner.toml"
+
+[agents.implementer]
+description = "Implement the planner's scoped tasks without expanding file scope."
+config_file = ".codex/agents/implementer.toml"
+
+[agents.validator]
+description = "Execute validation commands and return evidence-backed pass/fail findings."
+config_file = ".codex/agents/validator.toml"
+
+[agents.recorder]
+description = "Document and organize intermediate outputs for post-task audit."
+config_file = ".codex/agents/recorder.toml"
