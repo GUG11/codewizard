@@ -79,3 +79,21 @@ To be completed by engineer.
 ### Avoid
 - Introducing new packages or dependencies.
 - Overprotective coding with excessive checks or broad `try/except` blocks.
+
+## Skills
+### Skill Paths
+- Primary skill location: `~/.codex/skills/`
+- Installed by deploy script:
+- `~/.codex/skills/code-review-expert-main/SKILL.md`
+
+### Skill Trigger Rules
+- Use `code-review-expert` (folder: `code-review-expert-main`) only for diff-based code review on current code changes.
+- Default review mode is review-only (no code edits) unless the user explicitly asks for fixes.
+- Prioritize findings by severity (`P0` to `P3`) and provide actionable file/line guidance.
+- If there are no findings, explicitly state what was checked and residual risk.
+
+### Skill Coordination
+- If review and implementation are requested together, run in this order:
+1. `code-review-expert` for diff review findings.
+2. Implement fixes only for user-approved findings.
+3. Re-run `code-review-expert` to confirm closure.
