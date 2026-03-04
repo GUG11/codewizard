@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# run: bash agents/codex/deploy.sh
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -16,6 +17,11 @@ fi
 
 if [[ ! -f "${SOURCE_AGENTS}" ]]; then
   echo "Error: missing source file: ${SOURCE_AGENTS}" >&2
+  exit 1
+fi
+
+if [[ ! -d "${SOURCE_SKILLS_DIR}" ]]; then
+  echo "Error: missing source directory: ${SOURCE_SKILLS_DIR}" >&2
   exit 1
 fi
 
@@ -42,29 +48,12 @@ fi
 
 cp -f "${SOURCE_CONFIG}" "${TARGET_DIR}/config.toml"
 cp -f "${SOURCE_AGENTS}" "${TARGET_DIR}/AGENTS.md"
-
-if [[ -d "${SOURCE_SKILLS_DIR}" ]]; then
-  for skill_dir in "${SOURCE_SKILLS_DIR}"/*; do
-    if [[ -d "${skill_dir}" && -f "${skill_dir}/SKILL.md" ]]; then
-      skill_name="$(basename "${skill_dir}")"
-      mkdir -p "${TARGET_SKILLS_DIR}/${skill_name}"
-      cp -f "${skill_dir}/SKILL.md" "${TARGET_SKILLS_DIR}/${skill_name}/SKILL.md"
-    fi
-  done
-fi
-
-mkdir -p "${TARGET_SKILLS_DIR}/skill-creator"
-curl -fsSL \
-  "https://raw.githubusercontent.com/anthropics/skills/main/skills/skill-creator/SKILL.md" \
-  -o "${TARGET_SKILLS_DIR}/skill-creator/SKILL.md"
+cp -a "${SOURCE_SKILLS_DIR}/." "${TARGET_SKILLS_DIR}/"
 
 echo "Codex files deployed to ${TARGET_DIR}"
 echo "- ${TARGET_DIR}/config.toml"
 echo "- ${TARGET_DIR}/AGENTS.md"
-echo "- ${TARGET_SKILLS_DIR}/bug-fix-loop/SKILL.md"
-echo "- ${TARGET_SKILLS_DIR}/test-strategy/SKILL.md"
-echo "- ${TARGET_SKILLS_DIR}/perf-sanity/SKILL.md"
-echo "- ${TARGET_SKILLS_DIR}/skill-creator/SKILL.md"
+echo "- ${TARGET_SKILLS_DIR}"
 
 if [[ "${BACKED_UP}" -eq 1 ]]; then
   echo "Backup created at ${BACKUP_DIR}"
