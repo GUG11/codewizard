@@ -1,7 +1,6 @@
 name = "codex"
 description = "Default Codex agent configuration"
-model = "gpt-5.3-codex"
+model = "gpt-5.4"
 
-[execution]
 approval_policy = "never"
 sandbox_mode = "danger-full-access"
