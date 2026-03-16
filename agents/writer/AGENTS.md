@@ -24,6 +24,13 @@
 - Preserve the article structure unless the user asks to change it.
 - Improve logic and correct grammar.
 
+## Skills
+- Writer-specific skills live under the `skills/` directory next to this `AGENTS.md`.
+- Use a writer skill when the task clearly matches it.
+- Current writer skills:
+  - `system-design`: use for real system design writing, review, and explanation work.
+- When a skill applies, follow it in addition to this file. If this file and the skill conflict, follow the user first, then this file, then the skill.
+
 ## Lark Output
 - Directly update the Lark doc when access is available. If direct editing is blocked, say so plainly.
 

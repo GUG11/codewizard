@@ -4,16 +4,20 @@
 
 ## Definition
 
-A **Super IC in the agentic era** is an engineer who:
+A Super IC is a top technical brain native to AI.
+
+A **Super IC in the agentic era** is not just an engineer with better tools. The role looks more like a technical commander sitting in front of a wall of monitoring, switching constantly between dashboards, traces, terminals, documents, and agent interfaces while multiple AI agents work in parallel. The engineer frames the problem, watches execution across many surfaces at once, catches weak signals early, and dictates the next instruction to the right agent before mistakes compound.
+
+In practice, that means the engineer:
 
 * defines technical problems
 * designs system architectures
-* directs AI agents to execute work
+* directs multiple AI agents to execute work concurrently
 * validates outputs and detects errors
 * makes final technical decisions
 
-Agents perform execution.
-The engineer retains **judgment and direction**.
+Agents perform bounded execution.
+The engineer retains **judgment, coordination, and direction**.
 
 ---
 
@@ -24,45 +28,34 @@ This roadmap is for building an engineering operating model where agents handle 
 The goal is not full autonomy.
 The goal is high-leverage supervised execution with clear controls.
 
+One useful heuristic is to think about AI leverage as a compression of the share of work that still requires your full brain. In that framing:
+
+`efficiency_fold = 1 / (current percentage of your true brain work)`
+
+If a task that once required 100% of your direct attention now requires only 20%, the efficiency gain is 5x. The point is not that AI removes the need for judgment. The point is that AI shifts more of the execution load away from the scarce part of the system: your own high-value technical attention.
+
 ---
 
 # Core Responsibilities
 
-### Problem Definition
-
-Convert high-level goals into precise technical problems with clear constraints, interfaces, and success criteria.
-
-### System Architecture
-
-Design the system structure, select technical approaches, and define trade-offs before execution begins.
-
-### Agent Orchestration
-
-Route work to specialized agents for research, implementation, testing, profiling, and review.
-
-### Validation and Debugging
-
-Verify agent outputs, detect mistakes quickly, and isolate root causes.
-
-### Technical Decision-Making
-
-Choose architecture, experiments, and engineering direction based on evidence rather than agent confidence.
+* turn vague business or product goals into execution-ready problem statements with constraints, interfaces, risks, and success criteria that agents can act on without drifting
+* set the technical shape of the work before parallel execution starts: choose the approach, define boundaries, and make the main trade-offs explicit so agents are not inventing direction on their own
+* break work into tracks, assign it to specialized agents, and keep those tracks synchronized as research, implementation, testing, profiling, and review proceed at the same time
+* continuously inspect outputs, logs, traces, and diffs to catch weak reasoning, broken assumptions, and execution failures early, then isolate root cause before more agent work builds on bad state
+* absorb signals from all active workstreams and make the final calls on architecture, experiments, priorities, and rollout direction based on evidence rather than agent confidence
 
 ---
 
 # Prerequisites
 
-Before scaling agent usage, establish a shared execution platform:
+If you are starting from scratch, first understand the basic stack you are working with. Most newcomers will need four pieces before this roadmap makes sense:
 
-* repository access, shell access, and file edit permissions
-* reproducible local or remote execution environments
-* test and benchmark harnesses that agents can invoke safely
-* logging, trace collection, and artifact storage
-* task history, prompts, and result tracking for auditability
-* rollback paths for code, configs, and experiments
-* approval gates for high-risk actions such as production changes or broad refactors
+* an AI model, such as GPT, that provides the underlying reasoning and language capability
+* an agent product, such as Codex or Claude Code, that wraps the model in a working loop so it can read context, use tools, execute tasks, and report results
+* tool connections, often through MCP or similar integration layers, so the agent can reach the systems it needs such as repositories, documents, terminals, issue trackers, or internal knowledge
+* a real working environment, including code, docs, commands, tests, and review flows, so the agent is attached to actual engineering work instead of only chatting in isolation
 
-If these foundations are weak, agent quality will appear worse than it is because the environment is unstable.
+Once these pieces are in place, the next requirement is control. The agent needs clear permissions, observable outputs, and bounded tasks so you can tell what it did, verify whether it worked, and stop it before errors spread.
 
 ---
 
@@ -157,17 +150,18 @@ The writer agent should focus on drafting and synthesis, not final approval of s
 
 ---
 
-# Phase 2 — Expand Analysis and Connect Workflows (Month 2)
+# Phase 2 — Expand Analysis and Add Chief-of-Staff Support (Month 2)
 
 ## Goal
 
-Automate experiment analysis and connect specialized agents into repeatable pipelines.
+Automate experiment analysis, add a chief-of-staff style advisory agent, and strengthen the evidence flow between specialized agents.
 
 ## Deliverables
 
 * build the **data / profiling agent**
+* introduce an **AI chief of staff** role that can review intent, surface flaws, and propose alternatives
 * standardize logs, traces, benchmark outputs, and experiment artifacts so they are machine-readable
-* connect research, code, and analysis agents into sequential workflows
+* connect research, code, analysis, and writing through evidence-driven workflows
 
 ## Data / Profiling Agent
 
@@ -185,11 +179,26 @@ Outputs:
 * bottleneck diagnosis
 * recommended next action
 
+## AI Chief of Staff
+
+Responsibilities:
+
+* challenge vague or weak directions before execution begins
+* propose plans, alternatives, and sequencing options for the Super IC to review
+* point out missing constraints, evidence gaps, and execution risks
+* collect decision-ready context without becoming the issuer of orders
+
+Outputs:
+
+* critique of the current direction
+* proposed execution options
+* explicit risks, gaps, and trade-offs
+
 ## Workflow Pattern
 
 A typical supervised pipeline in this phase:
 
-research → implementation → test → profiling → review
+Super IC defines direction → AI chief of staff reviews and proposes → Super IC issues explicit orders → research / implementation / profiling / writing
 
 Each stage should emit artifacts that the next stage can consume directly.
 
@@ -198,7 +207,7 @@ Each stage should emit artifacts that the next stage can consume directly.
 * profiling and experiment analysis can run without manual data cleanup
 * agent handoffs are structured and reproducible
 * performance regressions are detected before final human approval
-* common multi-step tasks can be executed through a standard workflow
+* chief-of-staff review improves direction quality without becoming an interpretation layer between the IC and execution
 
 ## Success Metrics
 
@@ -206,39 +215,48 @@ Each stage should emit artifacts that the next stage can consume directly.
 * time required to diagnose a regression
 * percentage of pipeline runs that complete without handoff failure
 * reduction in manual analysis time for profiling and experiment review
+* percentage of proposed plans accepted or revised by the Super IC
 
 ---
 
-# Phase 3 — Introduce Planning and Bounded Autonomy (Month 3)
+# Phase 3 — Orchestrate All Agents and Bounded Autonomy (Month 3)
 
 ## Goal
 
-Coordinate agents through a planner and enable bounded autonomous execution loops under explicit control.
+Establish a shared operating context for all agents and enable bounded autonomous execution loops under explicit control.
 
 ## Deliverables
 
-* introduce a **planner agent**
-* orchestrate multi-agent pipelines with task decomposition and routing
+* define a shared context so all agents know their role, evidence source, and valid handoff path
+* formalize orchestration rules across research, code, analysis, writing, and chief-of-staff functions
 * enable bounded autonomous loops for safe classes of engineering work
 
-## Planner Agent
+## Shared Context
 
-Responsibilities:
+Each agent should know:
 
-* decompose complex tasks
-* assign work to specialized agents
-* coordinate execution order
-* collect outputs into a decision-ready summary
+* what role it owns
+* which evidence sources it can trust
+* which agent it should receive input from
+* which agent or human should receive its output
+* when it must stop and return control to the Super IC
 
-Outputs:
+Two flows should be explicit and separate:
 
-* task graph
-* execution plan
-* consolidated status and blockers
+Command flow:
 
-## Default Workflow
+* the Super IC remains the commander
+* the Super IC may discuss direction with the AI chief of staff, but that discussion is optional
+* the AI chief of staff may challenge, critique, or propose alternatives
+* the Super IC makes the final decision and issues explicit direction
+* that direction flows directly to the relevant execution agents
 
-planner → research → implementation → profiling → review
+Information flow:
+
+* code, logs, traces, diffs, and measured outputs should move upward as evidence with minimal reinterpretation
+* code and analysis agents should operate close to the source and provide the factual layer
+* higher-level agents such as the writer should summarize and simplify that verified evidence for humans rather than recreate technical facts from memory
+* this matters most in high-volume, tedious work, where agents are often more consistent than humans at preserving format, carrying forward details, and producing complete structured outputs across long runs
 
 ## Bounded Autonomous Loop
 
@@ -253,6 +271,8 @@ Allowed pattern:
 
 Boundaries:
 
+* the Super IC remains the source of direction and final task issuance
+* no agent may reinterpret vague intent and issue orders on its own
 * no production changes without human approval
 * no large refactors without explicit approval
 * no repeated retries beyond a fixed limit
@@ -260,14 +280,14 @@ Boundaries:
 
 ## Exit Criteria
 
-* planner-generated workflows are understandable and auditable
+* all agents operate within a shared context that is understandable and auditable
 * bounded autonomous loops improve speed without increasing defect rates
 * failure conditions trigger safe stop behavior
 * humans review fewer intermediate steps while still controlling key decisions
 
 ## Success Metrics
 
-* percentage of complex tasks decomposed correctly on first pass
+* percentage of multi-agent workflows that complete without handoff confusion
 * percentage of autonomous loops that terminate successfully within limits
 * defect rate of agent-driven changes versus human-only baseline
 * number of interventions required per multi-agent workflow
@@ -314,6 +334,7 @@ Agents:
 System:
 
 * executes repeatable engineering workflows
+* moves evidence from source-facing agents upward to synthesis agents with minimal distortion
 * tracks artifacts and decisions
 * enforces control boundaries
 
