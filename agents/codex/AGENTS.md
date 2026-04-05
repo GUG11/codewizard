@@ -35,7 +35,10 @@
 
 ## Task Routing
 - This file is the root policy and always applies.
-- Choose the mode, coding in `modes/coding_agents.md` or article writing in `modes/writer_agents.md`, based on the user's intent, and follow the selected mode together with this root policy.
+- Choose the mode based on the user's intent and follow the selected mode together with this root policy:
+- research in `modes/research_agents.md` for ambiguous, open-ended problems where the correct answer is not already known and the main task is to search, evaluate, decompose, and recommend before execution
+- coding in `modes/coding_agents.md`
+- article writing in `modes/writer_agents.md`
 
 ## Skills
 ### Skill Root
