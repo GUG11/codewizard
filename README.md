@@ -7,6 +7,7 @@ Configuration and deployment files for a Codex agent setup.
 - `agents/codex/config.toml`: default Codex agent configuration
 - `agents/codex/AGENTS.md`: repository-level agent instructions
 - `agents/codex/deploy.sh`: copies the Codex config, instructions, and skills into `~/.codex`
+- `agents/codex/modes/`: mode definitions for research, coding, and writing
 - `agents/codex/skills/`: local Codex skills shipped with this repo
 - `conf/vscode/user_settings.json`: editor settings
 
