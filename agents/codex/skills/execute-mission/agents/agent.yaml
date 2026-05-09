@@ -1,0 +1,7 @@
+interface:
+  display_name: "Execute Mission"
+  short_description: "Execute coding missions through a source-traceable mission brief"
+  default_prompt: "Use $execute-mission to create a mission brief from my request, modify the needed code or code-adjacent files, verify the formal requirements, and run bounded mission-completion review."
+
+# Agent-agnostic skill - works with any LLM provider.
+# No provider-specific configuration required.
