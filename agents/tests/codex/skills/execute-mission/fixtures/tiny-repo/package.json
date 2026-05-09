@@ -1,0 +1,9 @@
+{
+  "name": "execute-mission-tiny-repo",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build.js",
+    "test": "node scripts/test.js"
+  }
+}
