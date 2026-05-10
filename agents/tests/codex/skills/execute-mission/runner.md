@@ -8,7 +8,7 @@ Evaluate whether `execute-mission` produces a source-traceable mission brief, im
 
 ## Inputs
 
-- Skill under test: `agents/codex/skills/execute-mission/SKILL.md`
+- Skill under test: `agents/skills/execute-mission/SKILL.md`
 - Rubric: `agents/tests/codex/skills/execute-mission/rubric.md`
 - Cases: `agents/tests/codex/skills/execute-mission/cases/*.md`
 - Fixture repo: `agents/tests/codex/skills/execute-mission/fixtures/tiny-repo`

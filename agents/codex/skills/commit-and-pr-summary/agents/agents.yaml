@@ -1,4 +1,0 @@
-interface:
-  display_name: "Commit and PR"
-  short_description: "Draft commits and PR text from diffs"
-  default_prompt: "Use $commit-and-pr to write a commit message and PR description from the current git diff following repository rules."
