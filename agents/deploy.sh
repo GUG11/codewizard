@@ -1,14 +1,13 @@
 #!/usr/bin/env bash
-# run: bash agents/codex/deploy.sh
+# run: bash agents/deploy.sh
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-AGENTS_DIR="$(cd "${SCRIPT_DIR}/../" && pwd)"
 
-SOURCE_CONFIG="${SCRIPT_DIR}/config.toml"
-SOURCE_AGENTS="${AGENTS_DIR}/AGENTS.md"
-SOURCE_SKILLS_DIR="${AGENTS_DIR}/skills"
-SOURCE_CLAUDE_SETTINGS="${AGENTS_DIR}/claude/settings.json"
+SOURCE_CONFIG="${SCRIPT_DIR}/codex/config.toml"
+SOURCE_AGENTS="${SCRIPT_DIR}/AGENTS.md"
+SOURCE_SKILLS_DIR="${SCRIPT_DIR}/skills"
+SOURCE_CLAUDE_SETTINGS="${SCRIPT_DIR}/claude/settings.json"
 
 CODEX_DIR="${HOME}/.codex"
 CODEX_SKILLS_DIR="${CODEX_DIR}/skills"
