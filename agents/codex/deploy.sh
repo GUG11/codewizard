@@ -8,7 +8,6 @@ AGENTS_DIR="$(cd "${SCRIPT_DIR}/../" && pwd)"
 SOURCE_CONFIG="${SCRIPT_DIR}/config.toml"
 SOURCE_AGENTS="${AGENTS_DIR}/AGENTS.md"
 SOURCE_SKILLS_DIR="${AGENTS_DIR}/skills"
-SOURCE_CODEX_SKILLS_DIR="${SCRIPT_DIR}/skills"
 
 CODEX_DIR="${HOME}/.codex"
 CODEX_SKILLS_DIR="${CODEX_DIR}/skills"
@@ -54,17 +53,11 @@ fi
 cp -f "${SOURCE_CONFIG}" "${CODEX_DIR}/config.toml"
 cp -f "${SOURCE_AGENTS}" "${CODEX_DIR}/AGENTS.md"
 
-# Deploy shared skill content + Codex-specific agent.yaml into ~/.codex/skills/
 for skill_dir in "${SOURCE_SKILLS_DIR}"/*/; do
   skill_name="$(basename "${skill_dir}")"
   dest="${CODEX_SKILLS_DIR}/${skill_name}"
   mkdir -p "${dest}"
   cp -a "${skill_dir}." "${dest}/"
-  codex_agents_dir="${SOURCE_CODEX_SKILLS_DIR}/${skill_name}/agents"
-  if [[ -d "${codex_agents_dir}" ]]; then
-    mkdir -p "${dest}/agents"
-    cp -a "${codex_agents_dir}/." "${dest}/agents/"
-  fi
 done
 
 echo "Codex files deployed to ${CODEX_DIR}"
