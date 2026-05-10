@@ -8,6 +8,7 @@ AGENTS_DIR="$(cd "${SCRIPT_DIR}/../" && pwd)"
 SOURCE_CONFIG="${SCRIPT_DIR}/config.toml"
 SOURCE_AGENTS="${AGENTS_DIR}/AGENTS.md"
 SOURCE_SKILLS_DIR="${AGENTS_DIR}/skills"
+SOURCE_CLAUDE_SETTINGS="${AGENTS_DIR}/claude/settings.json"
 
 CODEX_DIR="${HOME}/.codex"
 CODEX_SKILLS_DIR="${CODEX_DIR}/skills"
@@ -16,7 +17,7 @@ BACKUP_ROOT="${CODEX_DIR}/backups"
 CLAUDE_DIR="${HOME}/.claude"
 CLAUDE_COMMANDS_DIR="${CLAUDE_DIR}/commands"
 
-for f in "${SOURCE_CONFIG}" "${SOURCE_AGENTS}"; do
+for f in "${SOURCE_CONFIG}" "${SOURCE_AGENTS}" "${SOURCE_CLAUDE_SETTINGS}"; do
   if [[ ! -f "${f}" ]]; then
     echo "Error: missing source file: ${f}" >&2
     exit 1
@@ -74,8 +75,10 @@ fi
 mkdir -p "${CLAUDE_DIR}" "${CLAUDE_COMMANDS_DIR}"
 
 cp -f "${SOURCE_AGENTS}" "${CLAUDE_DIR}/CLAUDE.md"
+cp -f "${SOURCE_CLAUDE_SETTINGS}" "${CLAUDE_DIR}/settings.json"
 echo "Claude Code files deployed to ${CLAUDE_DIR}"
 echo "- ${CLAUDE_DIR}/CLAUDE.md"
+echo "- ${CLAUDE_DIR}/settings.json"
 
 for skill_dir in "${SOURCE_SKILLS_DIR}"/*/; do
   skill_name="$(basename "${skill_dir}")"
