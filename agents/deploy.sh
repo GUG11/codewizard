@@ -94,9 +94,9 @@ echo "- ${CLAUDE_DIR}/settings.json"
 echo "- ${CLAUDE_COMMANDS_DIR}"
 [[ "${CLAUDE_BACKED_UP}" -eq 1 ]] && echo "Backup created at ${CLAUDE_BACKUP_DIR}"
 
-# --- Install Codex CLI ---
+# --- Install CLIs ---
 
-if ! command -v codex &>/dev/null; then
+ensure_npm() {
   if ! command -v npm &>/dev/null; then
     case "$(uname -s)" in
       Darwin)
@@ -120,8 +120,20 @@ if ! command -v codex &>/dev/null; then
         ;;
     esac
   fi
+}
+
+if ! command -v codex &>/dev/null; then
+  ensure_npm
   npm install -g @openai/codex
   echo "Codex CLI installed"
 else
   echo "Codex CLI already installed: $(command -v codex)"
+fi
+
+if ! command -v claude &>/dev/null; then
+  ensure_npm
+  npm install -g @anthropic-ai/claude-code
+  echo "Claude Code CLI installed"
+else
+  echo "Claude Code CLI already installed: $(command -v claude)"
 fi
