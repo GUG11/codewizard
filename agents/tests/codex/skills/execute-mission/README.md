@@ -1,6 +1,6 @@
 # Execute Mission Skill Tests
 
-This folder contains scenario tests for `agents/codex/skills/execute-mission`.
+This folder contains scenario tests for `agents/skills/execute-mission`.
 
 Run the harness by asking Codex:
 

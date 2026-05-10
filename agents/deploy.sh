@@ -11,10 +11,11 @@ SOURCE_CLAUDE_SETTINGS="${SCRIPT_DIR}/claude/settings.json"
 
 CODEX_DIR="${HOME}/.codex"
 CODEX_SKILLS_DIR="${CODEX_DIR}/skills"
-BACKUP_ROOT="${CODEX_DIR}/backups"
+CODEX_BACKUP_ROOT="${CODEX_DIR}/backups"
 
 CLAUDE_DIR="${HOME}/.claude"
 CLAUDE_COMMANDS_DIR="${CLAUDE_DIR}/commands"
+CLAUDE_BACKUP_ROOT="${CLAUDE_DIR}/backups"
 
 for f in "${SOURCE_CONFIG}" "${SOURCE_AGENTS}" "${SOURCE_CLAUDE_SETTINGS}"; do
   if [[ ! -f "${f}" ]]; then
@@ -33,21 +34,18 @@ fi
 mkdir -p "${CODEX_DIR}" "${CODEX_SKILLS_DIR}"
 
 STAMP="$(date +%Y%m%d_%H%M%S)"
-BACKUP_DIR="${BACKUP_ROOT}/${STAMP}"
-BACKED_UP=0
+
+# --- Codex deployment ---
+
+mkdir -p "${CODEX_DIR}" "${CODEX_SKILLS_DIR}"
+
+CODEX_BACKUP_DIR="${CODEX_BACKUP_ROOT}/${STAMP}"
+CODEX_BACKED_UP=0
 
 if [[ -f "${CODEX_DIR}/config.toml" || -f "${CODEX_DIR}/AGENTS.md" ]]; then
-  mkdir -p "${BACKUP_DIR}"
-
-  if [[ -f "${CODEX_DIR}/config.toml" ]]; then
-    cp -f "${CODEX_DIR}/config.toml" "${BACKUP_DIR}/config.toml"
-    BACKED_UP=1
-  fi
-
-  if [[ -f "${CODEX_DIR}/AGENTS.md" ]]; then
-    cp -f "${CODEX_DIR}/AGENTS.md" "${BACKUP_DIR}/AGENTS.md"
-    BACKED_UP=1
-  fi
+  mkdir -p "${CODEX_BACKUP_DIR}"
+  [[ -f "${CODEX_DIR}/config.toml" ]] && cp -f "${CODEX_DIR}/config.toml" "${CODEX_BACKUP_DIR}/config.toml" && CODEX_BACKED_UP=1
+  [[ -f "${CODEX_DIR}/AGENTS.md" ]]   && cp -f "${CODEX_DIR}/AGENTS.md"   "${CODEX_BACKUP_DIR}/AGENTS.md"   && CODEX_BACKED_UP=1
 fi
 
 cp -f "${SOURCE_CONFIG}" "${CODEX_DIR}/config.toml"
@@ -64,29 +62,34 @@ echo "Codex files deployed to ${CODEX_DIR}"
 echo "- ${CODEX_DIR}/config.toml"
 echo "- ${CODEX_DIR}/AGENTS.md"
 echo "- ${CODEX_SKILLS_DIR}"
-
-if [[ "${BACKED_UP}" -eq 1 ]]; then
-  echo "Backup created at ${BACKUP_DIR}"
-fi
+[[ "${CODEX_BACKED_UP}" -eq 1 ]] && echo "Backup created at ${CODEX_BACKUP_DIR}"
 
 # --- Claude Code deployment ---
 
 mkdir -p "${CLAUDE_DIR}" "${CLAUDE_COMMANDS_DIR}"
 
+CLAUDE_BACKUP_DIR="${CLAUDE_BACKUP_ROOT}/${STAMP}"
+CLAUDE_BACKED_UP=0
+
+if [[ -f "${CLAUDE_DIR}/CLAUDE.md" || -f "${CLAUDE_DIR}/settings.json" ]]; then
+  mkdir -p "${CLAUDE_BACKUP_DIR}"
+  [[ -f "${CLAUDE_DIR}/CLAUDE.md" ]]     && cp -f "${CLAUDE_DIR}/CLAUDE.md"     "${CLAUDE_BACKUP_DIR}/CLAUDE.md"     && CLAUDE_BACKED_UP=1
+  [[ -f "${CLAUDE_DIR}/settings.json" ]] && cp -f "${CLAUDE_DIR}/settings.json" "${CLAUDE_BACKUP_DIR}/settings.json" && CLAUDE_BACKED_UP=1
+fi
+
 cp -f "${SOURCE_AGENTS}" "${CLAUDE_DIR}/CLAUDE.md"
 cp -f "${SOURCE_CLAUDE_SETTINGS}" "${CLAUDE_DIR}/settings.json"
-echo "Claude Code files deployed to ${CLAUDE_DIR}"
-echo "- ${CLAUDE_DIR}/CLAUDE.md"
-echo "- ${CLAUDE_DIR}/settings.json"
 
 for skill_dir in "${SOURCE_SKILLS_DIR}"/*/; do
   skill_name="$(basename "${skill_dir}")"
   skill_md="${skill_dir}SKILL.md"
   if [[ -f "${skill_md}" ]]; then
     cp -f "${skill_md}" "${CLAUDE_COMMANDS_DIR}/${skill_name}.md"
-    echo "- ${CLAUDE_COMMANDS_DIR}/${skill_name}.md"
   fi
 done
 
-sudo apt install npm -y
-sudo npm install -g @openai/codex
+echo "Claude Code files deployed to ${CLAUDE_DIR}"
+echo "- ${CLAUDE_DIR}/CLAUDE.md"
+echo "- ${CLAUDE_DIR}/settings.json"
+echo "- ${CLAUDE_COMMANDS_DIR}"
+[[ "${CLAUDE_BACKED_UP}" -eq 1 ]] && echo "Backup created at ${CLAUDE_BACKUP_DIR}"
