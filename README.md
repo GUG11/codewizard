@@ -33,12 +33,15 @@ bash agents/deploy.sh
 **Codex** (`~/.codex`):
 - Copies `codex/config.toml` and `AGENTS.md`
 - Copies all skills into `~/.codex/skills/`
+- Copies language guides into `~/.codex/languages/`
 - Backs up existing Codex files before overwriting
 
 **Claude Code** (`~/.claude`):
 - Copies `AGENTS.md` as `CLAUDE.md`
 - Copies `claude/settings.json`
-- Copies each skill's `SKILL.md` as a slash command into `~/.claude/commands/`
+- Copies all skills into `~/.claude/skills/`
+- Copies language guides into `~/.claude/languages/`
+- Removes old generated skill folders from `~/.claude/commands/`
 - Backs up existing Claude Code files before overwriting
 
 ## Skills
