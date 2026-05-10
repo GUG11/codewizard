@@ -7,14 +7,18 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SOURCE_CONFIG="${SCRIPT_DIR}/codex/config.toml"
 SOURCE_AGENTS="${SCRIPT_DIR}/AGENTS.md"
 SOURCE_SKILLS_DIR="${SCRIPT_DIR}/skills"
+SOURCE_LANGUAGES_DIR="${SCRIPT_DIR}/languages"
 SOURCE_CLAUDE_SETTINGS="${SCRIPT_DIR}/claude/settings.json"
 
 CODEX_DIR="${HOME}/.codex"
 CODEX_SKILLS_DIR="${CODEX_DIR}/skills"
+CODEX_LANGUAGES_DIR="${CODEX_DIR}/languages"
 CODEX_BACKUP_ROOT="${CODEX_DIR}/backups"
 
 CLAUDE_DIR="${HOME}/.claude"
 CLAUDE_COMMANDS_DIR="${CLAUDE_DIR}/commands"
+CLAUDE_SKILLS_DIR="${CLAUDE_DIR}/skills"
+CLAUDE_LANGUAGES_DIR="${CLAUDE_DIR}/languages"
 CLAUDE_BACKUP_ROOT="${CLAUDE_DIR}/backups"
 
 for f in "${SOURCE_CONFIG}" "${SOURCE_AGENTS}" "${SOURCE_CLAUDE_SETTINGS}"; do
@@ -29,15 +33,20 @@ if [[ ! -d "${SOURCE_SKILLS_DIR}" ]]; then
   exit 1
 fi
 
+if [[ ! -d "${SOURCE_LANGUAGES_DIR}" ]]; then
+  echo "Error: missing source directory: ${SOURCE_LANGUAGES_DIR}" >&2
+  exit 1
+fi
+
 # --- Codex deployment ---
 
-mkdir -p "${CODEX_DIR}" "${CODEX_SKILLS_DIR}"
+mkdir -p "${CODEX_DIR}" "${CODEX_SKILLS_DIR}" "${CODEX_LANGUAGES_DIR}"
 
 STAMP="$(date +%Y%m%d_%H%M%S)"
 
 # --- Codex deployment ---
 
-mkdir -p "${CODEX_DIR}" "${CODEX_SKILLS_DIR}"
+mkdir -p "${CODEX_DIR}" "${CODEX_SKILLS_DIR}" "${CODEX_LANGUAGES_DIR}"
 
 CODEX_BACKUP_DIR="${CODEX_BACKUP_ROOT}/${STAMP}"
 CODEX_BACKED_UP=0
@@ -50,6 +59,7 @@ fi
 
 cp -f "${SOURCE_CONFIG}" "${CODEX_DIR}/config.toml"
 cp -f "${SOURCE_AGENTS}" "${CODEX_DIR}/AGENTS.md"
+cp -a "${SOURCE_LANGUAGES_DIR}/." "${CODEX_LANGUAGES_DIR}/"
 
 for skill_dir in "${SOURCE_SKILLS_DIR}"/*/; do
   skill_name="$(basename "${skill_dir}")"
@@ -62,11 +72,12 @@ echo "Codex files deployed to ${CODEX_DIR}"
 echo "- ${CODEX_DIR}/config.toml"
 echo "- ${CODEX_DIR}/AGENTS.md"
 echo "- ${CODEX_SKILLS_DIR}"
+echo "- ${CODEX_LANGUAGES_DIR}"
 [[ "${CODEX_BACKED_UP}" -eq 1 ]] && echo "Backup created at ${CODEX_BACKUP_DIR}"
 
 # --- Claude Code deployment ---
 
-mkdir -p "${CLAUDE_DIR}" "${CLAUDE_COMMANDS_DIR}"
+mkdir -p "${CLAUDE_DIR}" "${CLAUDE_COMMANDS_DIR}" "${CLAUDE_SKILLS_DIR}" "${CLAUDE_LANGUAGES_DIR}"
 
 CLAUDE_BACKUP_DIR="${CLAUDE_BACKUP_ROOT}/${STAMP}"
 CLAUDE_BACKED_UP=0
@@ -79,11 +90,13 @@ fi
 
 cp -f "${SOURCE_AGENTS}" "${CLAUDE_DIR}/CLAUDE.md"
 cp -f "${SOURCE_CLAUDE_SETTINGS}" "${CLAUDE_DIR}/settings.json"
+cp -a "${SOURCE_LANGUAGES_DIR}/." "${CLAUDE_LANGUAGES_DIR}/"
 
 for skill_dir in "${SOURCE_SKILLS_DIR}"/*/; do
   skill_name="$(basename "${skill_dir}")"
-  dest="${CLAUDE_COMMANDS_DIR}/${skill_name}"
+  dest="${CLAUDE_SKILLS_DIR}/${skill_name}"
   rm -f "${CLAUDE_COMMANDS_DIR}/${skill_name}.md"
+  rm -rf "${CLAUDE_COMMANDS_DIR:?}/${skill_name}"
   mkdir -p "${dest}"
   cp -a "${skill_dir}." "${dest}/"
 done
@@ -92,6 +105,8 @@ echo "Claude Code files deployed to ${CLAUDE_DIR}"
 echo "- ${CLAUDE_DIR}/CLAUDE.md"
 echo "- ${CLAUDE_DIR}/settings.json"
 echo "- ${CLAUDE_COMMANDS_DIR}"
+echo "- ${CLAUDE_SKILLS_DIR}"
+echo "- ${CLAUDE_LANGUAGES_DIR}"
 [[ "${CLAUDE_BACKED_UP}" -eq 1 ]] && echo "Backup created at ${CLAUDE_BACKUP_DIR}"
 
 # --- Install CLIs ---
