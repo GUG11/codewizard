@@ -93,3 +93,35 @@ echo "- ${CLAUDE_DIR}/CLAUDE.md"
 echo "- ${CLAUDE_DIR}/settings.json"
 echo "- ${CLAUDE_COMMANDS_DIR}"
 [[ "${CLAUDE_BACKED_UP}" -eq 1 ]] && echo "Backup created at ${CLAUDE_BACKUP_DIR}"
+
+# --- Install Codex CLI ---
+
+if ! command -v codex &>/dev/null; then
+  if ! command -v npm &>/dev/null; then
+    case "$(uname -s)" in
+      Darwin)
+        brew install node
+        ;;
+      Linux)
+        if command -v apt-get &>/dev/null; then
+          sudo apt-get install -y npm
+        elif command -v dnf &>/dev/null; then
+          sudo dnf install -y npm
+        elif command -v yum &>/dev/null; then
+          sudo yum install -y npm
+        else
+          echo "Error: unsupported package manager — install npm manually" >&2
+          exit 1
+        fi
+        ;;
+      *)
+        echo "Error: unsupported OS — install npm manually" >&2
+        exit 1
+        ;;
+    esac
+  fi
+  npm install -g @openai/codex
+  echo "Codex CLI installed"
+else
+  echo "Codex CLI already installed: $(command -v codex)"
+fi
