@@ -1,27 +1,56 @@
 # codewizard
 
-Configuration and deployment files for a Codex agent setup.
+Configuration and deployment files for AI coding agents. Supports both **OpenAI Codex** and **Claude Code**.
 
-## Contents
+## Structure
 
-- `agents/codex/config.toml`: default Codex agent configuration
-- `agents/codex/AGENTS.md`: repository-level agent instructions
-- `agents/codex/deploy.sh`: copies the Codex config, instructions, and skills into `~/.codex`
-- `agents/codex/modes/`: mode definitions for research, coding, and writing
-- `agents/codex/skills/`: local Codex skills shipped with this repo
-- `conf/vscode/user_settings.json`: editor settings
+```
+agents/
+├── AGENTS.md              # shared root policy (coding, writing, task routing)
+├── deploy.sh              # deploys to both ~/.codex and ~/.claude
+├── codex/
+│   └── config.toml        # Codex-specific: model, approval policy, sandbox mode
+├── claude/
+│   └── settings.json      # Claude Code-specific: model, permissions
+├── skills/                # platform-agnostic skills
+│   ├── execute-mission/
+│   ├── code-review-expert-main/
+│   ├── commit-and-pr-summary/
+│   ├── research/
+│   └── system-design/
+├── languages/             # language-specific coding guides
+└── tests/                 # skill test harnesses
+```
 
 ## Deploy
 
-Run:
-
 ```bash
-bash agents/codex/deploy.sh
+bash agents/deploy.sh
 ```
 
-The script:
+### What it does
 
-- copies `config.toml` and `AGENTS.md` into `~/.codex`
-- copies bundled skills into `~/.codex/skills`
-- creates backups of existing Codex files when present
-- installs `@openai/codex` with `npm`
+**Codex** (`~/.codex`):
+- Copies `codex/config.toml` and `AGENTS.md`
+- Copies all skills into `~/.codex/skills/`
+- Backs up existing Codex files before overwriting
+
+**Claude Code** (`~/.claude`):
+- Copies `AGENTS.md` as `CLAUDE.md`
+- Copies `claude/settings.json`
+- Copies each skill's `SKILL.md` as a slash command into `~/.claude/commands/`
+- Backs up existing Claude Code files before overwriting
+
+## Skills
+
+| Skill | Description |
+|---|---|
+| `execute-mission` | Create a mission brief, implement, verify, and review |
+| `code-review-expert-main` | Senior engineer review: SOLID, security, performance |
+| `commit-and-pr-summary` | Draft commit messages and PR descriptions from diffs |
+| `research` | Search, evaluate, decompose, and synthesize before acting |
+| `system-design` | System design guidance |
+
+## Other
+
+- `conf/vscode/user_settings.json`: editor settings
