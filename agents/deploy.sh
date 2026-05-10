@@ -82,10 +82,10 @@ cp -f "${SOURCE_CLAUDE_SETTINGS}" "${CLAUDE_DIR}/settings.json"
 
 for skill_dir in "${SOURCE_SKILLS_DIR}"/*/; do
   skill_name="$(basename "${skill_dir}")"
-  skill_md="${skill_dir}SKILL.md"
-  if [[ -f "${skill_md}" ]]; then
-    cp -f "${skill_md}" "${CLAUDE_COMMANDS_DIR}/${skill_name}.md"
-  fi
+  dest="${CLAUDE_COMMANDS_DIR}/${skill_name}"
+  rm -f "${CLAUDE_COMMANDS_DIR}/${skill_name}.md"
+  mkdir -p "${dest}"
+  cp -a "${skill_dir}." "${dest}/"
 done
 
 echo "Claude Code files deployed to ${CLAUDE_DIR}"
