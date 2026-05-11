@@ -9,14 +9,14 @@ Evaluate whether `execute-mission` produces a source-traceable mission brief, im
 ## Inputs
 
 - Skill under test: `agents/skills/execute-mission/SKILL.md`
-- Rubric: `agents/tests/codex/skills/execute-mission/rubric.md`
-- Cases: `agents/tests/codex/skills/execute-mission/cases/*.md`
-- Fixture repo: `agents/tests/codex/skills/execute-mission/fixtures/tiny-repo`
+- Rubric: `agents/tests/skills/execute-mission/rubric.md`
+- Cases: `agents/tests/skills/execute-mission/cases/*.md`
+- Fixture repo: `agents/tests/skills/execute-mission/fixtures/tiny-repo`
 
 ## Run Procedure
 
 1. Create a timestamped results directory:
-   `agents/tests/codex/skills/execute-mission/results/YYYY-MM-DD-HHMMSS/`
+   `agents/tests/skills/execute-mission/results/YYYY-MM-DD-HHMMSS/`
 2. Read the skill under test and the rubric.
 3. For each case file, read the case completely.
 4. Copy `fixtures/tiny-repo` to a fresh temp workspace under `/tmp/execute-mission-tests/<case-id>-<timestamp>/`.

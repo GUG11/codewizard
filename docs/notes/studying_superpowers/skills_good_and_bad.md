@@ -1,8 +1,8 @@
 # Studying Superpowers Skills: Good and Bad
 
-## `systematic-debugging`
+source: https://github.com/obra/superpowers
 
-Source reviewed: `/Users/hyzhang/Project/superpowers/skills/systematic-debugging/SKILL.md`
+## `systematic-debugging`
 
 ### What the skill does well
 

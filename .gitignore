@@ -1,5 +1,5 @@
 */.DS_Store
 .DS_Store
 
-agents/tests/codex/skills/execute-mission/results/*
-!agents/tests/codex/skills/execute-mission/results/.gitkeep
+agents/tests/skills/*/results/*
+!agents/tests/skills/*/results/.gitkeep
