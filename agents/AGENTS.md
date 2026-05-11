@@ -37,6 +37,11 @@
 - For ambiguous, open-ended problems where the correct answer is not already known, load the `research` skill and follow it before execution.
 - For all other tasks, the coding and writing rules below apply directly.
 
+## Concurrent Worktrees
+- For concurrent agent work, use the `isolated-worktree` skill.
+- Treat the isolated worktree as the execution environment and the source-control commit as the durable artifact.
+- Do not delete, recycle, or abandon an isolated worktree until its changes are captured in a Git commit, Sapling SCM commit, or the user explicitly says the worktree is disposable.
+
 ## Skills
 ### Skill Usage Rules
 - If the user names a skill or the task clearly matches a skill description, load that skill's `SKILL.md` and follow it.

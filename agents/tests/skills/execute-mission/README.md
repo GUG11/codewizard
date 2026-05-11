@@ -2,10 +2,16 @@
 
 This folder contains scenario tests for `agents/skills/execute-mission`.
 
-Run the harness by asking Codex:
+Run with Codex:
 
-```text
-Run agents/tests/codex/skills/execute-mission/runner.md
+```bash
+codex "Run agents/tests/skills/execute-mission/runner.md"
+```
+
+Run with Claude Code:
+
+```bash
+claude "Run agents/tests/skills/execute-mission/runner.md"
 ```
 
 The runner executes each case in a copied fixture repo, captures artifacts, scores the run with `rubric.md`, and writes a summary under `results/`.
