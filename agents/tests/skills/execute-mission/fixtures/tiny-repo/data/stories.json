@@ -1,0 +1,16 @@
+[
+  { "id": "p01", "type": "ad", "timestamp": 1710001400000, "score": 0.99 },
+  { "id": "p02", "type": "ad", "timestamp": 1710001300000, "score": 0.98 },
+  { "id": "p03", "type": "ad", "timestamp": 1710001200000, "score": 0.97 },
+  { "id": "p04", "type": "ad", "timestamp": 1710001100000, "score": 0.96 },
+  { "id": "p05", "type": "recommendation", "timestamp": 1710001000000, "score": 0.95 },
+  { "id": "p06", "type": "recommendation", "timestamp": 1710000900000, "score": 0.94 },
+  { "id": "p07", "type": "recommendation", "timestamp": 1710000800000, "score": 0.93 },
+  { "id": "p08", "type": "organic", "timestamp": 1710000700000, "score": 0.92 },
+  { "id": "p09", "type": "organic", "timestamp": 1710000600000, "score": 0.91 },
+  { "id": "p10", "type": "ad", "timestamp": 1710000500000, "score": 0.9 },
+  { "id": "p11", "type": "recommendation", "timestamp": 1710000400000, "score": 0.89 },
+  { "id": "p12", "type": "organic", "timestamp": 1710000300000, "score": 0.88 },
+  { "id": "p13", "type": "ad", "timestamp": 1710000200000, "score": 0.87 },
+  { "id": "p14", "type": "recommendation", "timestamp": 1710000100000, "score": 0.86 }
+]

@@ -1,6 +1,6 @@
 ---
 name: execute-mission
-description: Use when modifying or creating code or code-adjacent project files, including tests, configs, scripts, and docs. Create a mission brief before editing, then implement, verify, and run bounded mission-completion review.
+description: Use when modifying or creating code or code-adjacent project files, including tests, configs, scripts, and docs. Create a mission brief, get user approval, then implement, verify, and run bounded mission-completion review.
 ---
 
 # Execute Mission
@@ -13,55 +13,49 @@ This skill defines how to operate. It does not prescribe the implementation desi
 
 ## Workflow
 
-### 1. Create the mission brief
+### 1. Create and approve the mission brief
 
-Before editing code, create a mission brief with this structure:
+Create a mission brief and present it to the user for approval. If the user gives feedback, revise the brief and present it again. Proceed only after the user explicitly approves the current brief.
+
+Use this structure:
 
 ```markdown
 # Mission Brief: <short title>
 
-## Source of Intent
+## Initial User Request
 
-**Initial User Request:** <verbatim request that triggered the mission>
+<verbatim request that triggered the mission>
 
-**Clarifications:**
-- <mission-shaping user clarification, or "None">
+## User Feedback
 
-**Interpreted Intent:** <brief paraphrase, no new scope>
+- Round <n>: <verbatim user feedback or explicit approval of the mission brief>
 
 ## Formal Requirements
 
-| Requirement | Source | Done When | Evidence |
+| Requirement | User's original word | Definition of Done | Evidence |
 |---|---|---|---|
 | ... | ... | ... | Pending |
 ```
 
-Before writing the file, try to fill this structure from the user's request and available context.
-
-Use the incomplete mission brief as the clarification instrument:
-
-- Can you copy the original prompt verbatim?
-- Can you capture only mission-shaping user clarifications, without copying the whole dialogue?
-- Can you paraphrase the interpreted intent briefly without adding scope?
-- Can each `Requirement` cite a real source: the initial user request, explicit human clarification, repo policy, existing public contract, existing tests, or existing docs?
-- Can each `Done When` cell describe the verification method that proves the requirement?
-- If verification needs logs, debug output, screenshots, response bodies, generated files, or other diagnostic evidence, does `Done When` say so explicitly?
-
-If all fields can be filled without guessing, proceed directly to writing the brief. If any required field or table cell cannot be filled without guessing, ask the smallest focused clarification needed for that field.
-
-Repeat this until the mission brief can be filled concretely. Let the incomplete mission brief reveal what needs to be asked.
+For feedback and approval, record the user's exact words. Do not summarize, reinterpret, or convert them into your own intent. Approval must clearly approve the current mission brief; otherwise treat the message as feedback and present a revised brief again.
 
 When the brief can be filled concretely, write it to:
 
 `MISSION_BRIEF_PATH=/tmp/docs/missions/YYYY-MM-DD-<short-slug>.md`
 
-Keep `MISSION_BRIEF_PATH` as the exact path to the saved brief for review and final reporting.
+Keep `MISSION_BRIEF_PATH` as the exact path to the saved brief for review and final reporting. Present it to the user for approval before implementation. Do not edit project files beyond the mission brief until the user explicitly approves the current brief.
+
+If the user rejects, corrects, or questions the brief, revise `MISSION_BRIEF_PATH` from that feedback and present it again. Repeat until the user explicitly approves the current brief or the mission is blocked. When the user approves it, update `MISSION_BRIEF_PATH` so the last `User Feedback` entry records the exact approval words.
 
 ### 2. Implement the mission
 
-Work mission-first: use your judgment and available tools to achieve the mission brief.
+Approval gate: implementation is forbidden until the saved mission brief's last `User Feedback` entry records exact user words that clearly approve the current mission brief.
 
-If a `Done When` condition requires logs or other diagnostic evidence, prefer existing logs first. If existing logs are insufficient, enhance an existing log statement before adding a new one. Add new logging only when needed for verification, and keep it as small as possible.
+Missing approval is not a concern, warning, or verification gap. It is a blocker.
+
+Work mission-first after that approval check: use your judgment and available tools to achieve the approved mission brief.
+
+If a `Definition of Done` condition requires logs or other diagnostic evidence, prefer existing logs first. If existing logs are insufficient, enhance an existing log statement before adding a new one. Add new logging only when needed for verification, and keep it as small as possible.
 
 ### 3. Review, verify, iterate, and report
 
