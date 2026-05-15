@@ -34,17 +34,16 @@ Inspect the current git changes, infer the real scope of the work, and produce c
 # Summary
 Purpose:
 
-Key changes:
-- [path:line] change summary
-- [path:line] change summary
+Changes:
+<several sentences to describe the key changes>
 
 # Test
 ```
 
+- Output raw markdown, don't render it.
 - Fill `Purpose:` with one succinct sentence.
-- Fill `Key changes:` with concise bullets that describe the important implementation changes.
-- Include file and line references for each key change when the diff makes them clear.
-- Prefer the smallest set of bullets that still explains the change.
+- Fill `Changes` with flowing prose, not bullet points. Describe what changed and how it works in plain language a non-expert reviewer could follow.
+- Include file and line references for changes when the diff makes them clear.
 - Base the summary on the diff, not on assumptions about product intent.
 - Leave the `# Test` section for the user to fill.
 
