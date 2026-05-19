@@ -9,8 +9,6 @@ description: Use when modifying or creating code or code-adjacent project files,
 
 Execute a coding mission from a human-owned request. Preserve the source of intent before coding, choose the implementation approach after inspecting the codebase, verify with evidence, and review the result against the mission brief.
 
-This skill defines how to operate. It does not prescribe the implementation design.
-
 ## Workflow
 
 ### 1. Create and approve the mission brief
@@ -32,12 +30,12 @@ Use this structure:
 
 ## Formal Requirements
 
-| Requirement | User's original word | Definition of Done | Evidence |
-|---|---|---|---|
-| ... | ... | ... | Pending |
+| Requirement | Definition of Done | Evidence |
+|---|---|---|
+| ... | ... | Pending |
 ```
 
-For feedback and approval, record the user's exact words. Do not summarize, reinterpret, or convert them into your own intent. Approval must clearly approve the current mission brief; otherwise treat the message as feedback and present a revised brief again.
+For feedback and approval, record the user's exact words. Based on those words, understand and organize the user's intent into real, non-repetitive requirements. Approval must clearly approve the current mission brief; otherwise treat the message as feedback and present a revised brief again.
 
 When the brief can be filled concretely, write it to:
 
@@ -53,13 +51,15 @@ Approval gate: implementation is forbidden until the saved mission brief's last 
 
 Missing approval is not a concern, warning, or verification gap. It is a blocker.
 
+Before editing project files, read `references/code-execution-policy.md`. Use it when implementing changes, verifying results, and reporting status.
+
 Work mission-first after that approval check: use your judgment and available tools to achieve the approved mission brief.
 
 If a `Definition of Done` condition requires logs or other diagnostic evidence, prefer existing logs first. If existing logs are insufficient, enhance an existing log statement before adding a new one. Add new logging only when needed for verification, and keep it as small as possible.
 
 ### 3. Review, verify, iterate, and report
 
-After implementation, reload the saved mission brief from `MISSION_BRIEF_PATH`. Use the file contents as the ground truth for review, not memory of the brief.
+After implementation, reload the saved mission brief from `MISSION_BRIEF_PATH`. Use the file contents as the ground truth for the approved mission requirements, not memory of the brief.
 
 Each review round verifies the mission:
 
