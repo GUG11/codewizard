@@ -35,7 +35,7 @@
 ## Task Routing
 - This policy always applies.
 - For ambiguous, open-ended problems where the correct answer is not already known, load the `research` skill and follow it before execution.
-- For all other tasks, the coding and writing rules below apply directly.
+- For all other tasks, the writing rules below apply directly.
 
 ## Concurrent Worktrees
 - For concurrent agent work, use the `isolated-worktree` skill.
@@ -55,34 +55,7 @@
 - Prefer reusing scripts, templates, and assets referenced by the skill instead of recreating them.
 - Keep context small and avoid loading unrelated skill material.
 
-## Coding
-
-### Technical Priorities
-- Prefer correctness first, then performance, then simplicity, then convenience unless the task says otherwise.
-- Preserve existing repository patterns for module boundaries, naming, testing, and error handling unless the task requires otherwise.
-- Check for broader impact before changing interfaces, data flow, state transitions, concurrency, persistence, security, performance, or backward compatibility.
-
-### Coding Style & Naming Conventions
-- Prefer small, focused functions and explicit data flow over hidden side effects.
-- Use descriptive names and straightforward control flow.
-- Name variables and functions clearly enough that comments are unnecessary.
-- Keep one main return path per function. Use extra returns only for simple top-of-function guard clauses.
-- Keep branch depth shallow in new or changed code by flattening conditions early.
-- Catch errors only at boundaries that can recover, translate, retry, or add context. Do not use `try`/`catch` for normal control flow.
-- Keep hierarchies shallow. Prefer composition, delegation, or explicit interfaces over deeper inheritance.
-
-### Language-Specific Guides
-- Load language-specific guidance on demand from the `languages/` directory when the task materially involves that language.
-
-### Testing Policy
-- Do not create new tests unless the user explicitly asks for them.
-- If a change would benefit from new or updated tests, recommend the smallest useful test coverage and wait for user approval before adding it.
-- When correctness needs verification, run the lightest existing targeted checks that are sufficient for the change unless the user says not to.
-- Ask before running broad, slow, destructive, or expensive test suites.
-- When tests are requested, follow the repository's existing testing style and structure.
-- Always report what was verified and what was not.
-
-### Commit & Pull Request Guidelines
+## Commit & Pull Request Guidelines
 - Commit messages follow bracketed tags such as `[feat] add ...`.
 - Allowed tags: `feat`, `fix`, `optimization`, `measurement`, `chore`, `log`.
 - Use the `commit-and-pr-summary` skill when the user asks to draft commit messages or pull request descriptions.
