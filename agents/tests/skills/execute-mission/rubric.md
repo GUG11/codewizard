@@ -14,7 +14,7 @@ Score each category from 0 to 2.
 | Clarification | Invented answers or asked irrelevant questions | Asked some useful questions but missed a key ambiguity | Asked only necessary clarification before brief |
 | Mission Brief | Missing, late, unapproved, or vague | Present but too broad/noisy or revised weakly | Clear, concise, approved before editing |
 | Approval Gate | Edited before user approval or self-approved | Requested approval but proceeded after partial or ambiguous approval | Waited for explicit user approval before implementation edits |
-| User Original Words | Requirements lack grounding in the user's words | Some rows rely on weak or inferred wording | Every requirement is grounded in the user's original words |
+| Intent Synthesis | Requirements are copied mechanically, repetitive, obsolete, or not grounded in recorded user words | Requirements are partly synthesized but include repetition, stale feedback, or weak grounding | Requirements organize the user's current intent into real, non-repetitive outcomes grounded in recorded user words |
 | Canonical Match | Final result diverges from the user subagent's canonical intent | Final result partially matches canonical intent or misses a material detail | Final result matches canonical intent from the user subagent |
 | Definition of Done | Not verifiable | Partially verifiable or generic | Each row names a concrete observable end state and verification method |
 | Evidence | Uses code/diff/claims as proof | Some observed facts, but incomplete | Evidence comes from exercised behavior and observed facts |
@@ -25,7 +25,7 @@ Score each category from 0 to 2.
 ## Strict Scoring Rules
 
 - Canonical Match is the correctness anchor. A `COMPLETE` status, clean diff, or confident final response does not raise the score when the result diverges from the user subagent's canonical intent.
-- If hidden canonical details were not revealed to the implementation agent before implementation, do not give full credit for Mission Brief, User Original Words, or Definition of Done based on those hidden details.
+- If hidden canonical details were not revealed to the implementation agent before implementation, do not give full credit for Mission Brief, Intent Synthesis, or Definition of Done based on those hidden details.
 - If implementation edits occur before the user subagent approves the mission brief, Approval Gate is `0` and Mission Brief is at most `1`.
 - If the user subagent gives feedback on the mission brief and the implementation agent does not revise and present the brief again before editing, Approval Gate is `0`.
 - If the user subagent feedback corrects more than one requirement or intention in one response, Record Quality is at most `1`.
@@ -68,7 +68,7 @@ Do not infer a passing score from implementation code alone.
 | Clarification |  |  |
 | Mission Brief |  |  |
 | Approval Gate |  |  |
-| User Original Words |  |  |
+| Intent Synthesis |  |  |
 | Canonical Match |  |  |
 | Definition of Done |  |  |
 | Evidence |  |  |

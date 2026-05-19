@@ -9,8 +9,6 @@ description: Use when modifying or creating code or code-adjacent project files,
 
 Execute a coding mission from a human-owned request. Preserve the source of intent before coding, choose the implementation approach after inspecting the codebase, verify with evidence, and review the result against the mission brief.
 
-This skill defines how to operate. It does not prescribe the implementation design.
-
 ## Workflow
 
 ### 1. Create and approve the mission brief
@@ -32,12 +30,64 @@ Use this structure:
 
 ## Formal Requirements
 
-| Requirement | User's original word | Definition of Done | Evidence |
+| Requirement | Test Plan | Definition of Done | Evidence |
 |---|---|---|---|
 | ... | ... | ... | Pending |
+
+## Implementation Hints
+
+- <only implementation hints or requested tools for implementation that are not standalone success outcomes>
 ```
 
-For feedback and approval, record the user's exact words. Do not summarize, reinterpret, or convert them into your own intent. Approval must clearly approve the current mission brief; otherwise treat the message as feedback and present a revised brief again.
+For feedback and approval, record the user's exact words.
+
+Build the brief from the user's current intent:
+
+- A formal requirement is an outcome the mission must deliver, not an implementation step, tool invocation, safeguard, or generic best practice. Do not add default requirements such as "keep the change narrowly scoped", "preserve unrelated behavior", "do not add dependencies", "do not refactor", or "provide evidence".
+- Keep a single-intent request as one requirement unless the user asks for multiple independently observable outcomes. Do not restate the same outcome as separate requirements for availability, semantics, scope, and evidence.
+- `Test Plan` must specify exact runnable commands that exercise the code change. Expected observable results belong in `Definition of Done`, not `Test Plan`. Test, lint, build, or compile output may be listed as supplemental checks, but they are not requirement evidence for local development workflows.
+- `Definition of Done` must name the observable completed state. It must not include verification commands, evidence claims, implementation mechanics, or generic scope-control language unless the user explicitly made one of those the outcome.
+- For local development workflows, evidence must be logs captured from exercising the requirement. `arc lint`, compile/build output, test output, formatting, static search, code inspection, diffs, or claims that code exists are not requirement evidence unless the requirement itself is explicitly about that static artifact.
+- Put implementation hints and requested tools for implementation in `Implementation Hints`.
+
+Example: One-Intent Implementation Request
+
+User request:
+
+Add multiplication support to the calculator.
+
+Bad:
+
+```markdown
+| Requirement | Test Plan | Definition of Done | Evidence |
+|---|---|---|---|
+| Add multiplication | Run relevant calculator tests. | Calculator supports multiplication. | Pending |
+| Preserve existing calculator behavior | Run existing checks. | Addition and subtraction still work. | Pending |
+| Keep the change simple | Review the diff. | No unrelated refactor. | Pending |
+| Provide evidence | Run lint and inspect code. | The implementation is correct. | Pending |
+```
+
+Why it is bad:
+- It splits one requested outcome into feature, preservation, scope, and evidence rows.
+- That split makes each `Test Plan` non-actionable: no row exercises the calculator change end to end.
+- The test plans do not name exact runnable commands.
+- It turns normal operating constraints into mission requirements.
+- It treats lint, diff review, and code inspection as evidence.
+- Its `Definition of Done` cells are vague instead of naming observable command results.
+
+Good:
+
+```markdown
+| Requirement | Test Plan | Definition of Done | Evidence |
+|---|---|---|---|
+| Add multiplication support to the calculator | Run `node scripts/check-calculator.js multiply 6 7`. Run `node scripts/check-calculator.js add 2 3`. Run `node scripts/check-calculator.js subtract 9 4`. | The multiply command prints `42`. The existing add and subtract commands still print `5`. | Pending |
+
+
+## Implementation Hints
+- Follow the existing operation dispatch style in the calculator module.
+```
+
+Approval must clearly approve the current mission brief; otherwise treat the message as feedback and present a revised brief again.
 
 When the brief can be filled concretely, write it to:
 
@@ -53,19 +103,22 @@ Approval gate: implementation is forbidden until the saved mission brief's last 
 
 Missing approval is not a concern, warning, or verification gap. It is a blocker.
 
+Before editing project files, read `references/code-execution-policy.md`. Use it when implementing changes, verifying results, and reporting status.
+
 Work mission-first after that approval check: use your judgment and available tools to achieve the approved mission brief.
 
-If a `Definition of Done` condition requires logs or other diagnostic evidence, prefer existing logs first. If existing logs are insufficient, enhance an existing log statement before adding a new one. Add new logging only when needed for verification, and keep it as small as possible.
+If a `Test Plan` condition requires logs or other diagnostic evidence, prefer existing logs first. If existing logs are insufficient, enhance an existing log statement before adding a new one. Add new logging only when needed for verification, and keep it as small as possible.
 
 ### 3. Review, verify, iterate, and report
 
-After implementation, reload the saved mission brief from `MISSION_BRIEF_PATH`. Use the file contents as the ground truth for review, not memory of the brief.
+After implementation, reload the saved mission brief from `MISSION_BRIEF_PATH`. Use the file contents as the ground truth for the approved mission requirements, not memory of the brief.
 
 Each review round verifies the mission:
 
 - Treat the implementation as untrusted evidence, not the source of truth.
-- Compare the diff to each formal requirement.
-- For each requirement, exercise the changed behavior and update `Evidence` with concise observed facts: command/check run, result, and relevant data/logs/output. Existing code or the diff itself is not satisfaction evidence.
+- Compare the diff to each formal requirement's `Definition of Done`.
+- For each requirement, follow the `Test Plan`, exercise the changed behavior, and update `Evidence` with concise observed facts: command/check run, result, and relevant log lines. For local development workflows, logs are the requirement evidence. Existing code, diffs, `arc lint`, compile/build output, test output, formatting, static search, or claims that code exists are not satisfaction evidence unless the requirement itself is explicitly about that static artifact.
+- Consider `Implementation Hints` when reviewing implementation choices, but do not convert those hints into new formal requirements during review.
 - If evidence cannot be produced, update the `Evidence` cell with what remains unverified and why.
 - Report only mission-completion issues: missing requirements, incorrect behavior, regressions that violate the mission, or missing evidence.
 - Do not invent new requirements during review.

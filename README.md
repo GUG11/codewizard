@@ -6,7 +6,7 @@ Configuration and deployment files for AI coding agents. Supports both **OpenAI 
 
 ```
 agents/
-├── AGENTS.md              # shared root policy (coding, writing, task routing)
+├── AGENTS.md              # shared root policy (writing, task routing)
 ├── deploy.sh              # deploys to both ~/.codex and ~/.claude
 ├── codex/
 │   └── config.toml        # Codex-specific: model, approval policy, sandbox mode
@@ -14,11 +14,12 @@ agents/
 │   └── settings.json      # Claude Code-specific: model, permissions
 ├── skills/                # platform-agnostic skills
 │   ├── execute-mission/
+│   │   └── references/languages/
+│   │                       # language-specific execution guides
 │   ├── code-review-expert-main/
 │   ├── commit-and-pr-summary/
 │   ├── research/
 │   └── system-design/
-├── languages/             # language-specific coding guides
 └── tests/                 # skill test harnesses
 ```
 
@@ -33,14 +34,14 @@ bash agents/deploy.sh
 **Codex** (`~/.codex`):
 - Copies `codex/config.toml` and `AGENTS.md`
 - Copies all skills into `~/.codex/skills/`
-- Copies language guides into `~/.codex/languages/`
+- Deploys language guides as execute-mission skill references
 - Backs up existing Codex files before overwriting
 
 **Claude Code** (`~/.claude`):
 - Copies `AGENTS.md` as `CLAUDE.md`
 - Copies `claude/settings.json`
 - Copies all skills into `~/.claude/skills/`
-- Copies language guides into `~/.claude/languages/`
+- Deploys language guides as execute-mission skill references
 - Removes old generated skill folders from `~/.claude/commands/`
 - Backs up existing Claude Code files before overwriting
 
