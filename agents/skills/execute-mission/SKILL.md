@@ -43,12 +43,13 @@ For feedback and approval, record the user's exact words.
 
 Build the brief from the user's current intent:
 
-- A formal requirement is an outcome the mission must deliver, not an implementation step, tool invocation, safeguard, or generic best practice. Do not add default requirements such as "keep the change narrowly scoped", "preserve unrelated behavior", "do not add dependencies", "do not refactor", or "provide evidence".
+- Requirements are user-requested outcomes only; do not invent requirements. For example, do not add "keep the change narrow", "preserve unrelated behavior", "do not add dependencies", or "provide evidence".
 - Keep a single-intent request as one requirement unless the user asks for multiple independently observable outcomes. Do not restate the same outcome as separate requirements for availability, semantics, scope, and evidence.
-- `Test Plan` must specify exact runnable commands that exercise the code change. Expected observable results belong in `Definition of Done`, not `Test Plan`. Test, lint, build, or compile output may be listed as supplemental checks, but they are not requirement evidence for local development workflows.
-- `Definition of Done` must name the observable completed state. It must not include verification commands, evidence claims, implementation mechanics, or generic scope-control language unless the user explicitly made one of those the outcome.
-- For local development workflows, evidence must be logs captured from exercising the requirement. `arc lint`, compile/build output, test output, formatting, static search, code inspection, diffs, or claims that code exists are not requirement evidence unless the requirement itself is explicitly about that static artifact.
-- Put implementation hints and requested tools for implementation in `Implementation Hints`.
+- Keep `Test Plan` and `Definition of Done` separate: `Test Plan` lists exact runnable commands that exercise the change; `Definition of Done` states the observable results those commands must show. Do not put expected results in `Test Plan`, and do not put commands, evidence claims, implementation mechanics, or generic scope-control language in `Definition of Done`.
+- Test, lint, build, or compile commands may be supplemental checks, but their output is not requirement evidence for local development workflows.
+- `Definition of Done` is outcome-oriented: state the observable completed behavior or artifact. Code changes, compilation, and implementation steps are not Definition of Done.
+- `Evidence` must quote requirement-specific observed output from the `Test Plan`. Prefer behavior logs. Final command output is acceptable only when it directly shows the required result. Generic pass/fail output, build/compile/lint output, formatting, static search, diffs, and code inspection are not requirement evidence.
+- Put the user's implementation suggestions in `Implementation Hints`. Hints are non-binding guidance; do not convert them into requirements.
 
 Example: One-Intent Implementation Request
 
@@ -73,7 +74,7 @@ Why it is bad:
 - The test plans do not name exact runnable commands.
 - It turns normal operating constraints into mission requirements.
 - It treats lint, diff review, and code inspection as evidence.
-- Its `Definition of Done` cells are vague instead of naming observable command results.
+- Its `Definition of Done` cells are vague instead of naming observable command results. Never use "code was changed" or "code looks correct" as `Definition of Done`.
 
 Good:
 
@@ -117,7 +118,7 @@ Each review round verifies the mission:
 
 - Treat the implementation as untrusted evidence, not the source of truth.
 - Compare the diff to each formal requirement's `Definition of Done`.
-- For each requirement, follow the `Test Plan`, exercise the changed behavior, and update `Evidence` with concise observed facts: command/check run, result, and relevant log lines. For local development workflows, logs are the requirement evidence. Existing code, diffs, `arc lint`, compile/build output, test output, formatting, static search, or claims that code exists are not satisfaction evidence unless the requirement itself is explicitly about that static artifact.
+- For each requirement, follow the `Test Plan`, exercise the changed behavior, and update `Evidence` with concise observed facts: command/check run, result, and requirement-specific observed output. Prefer behavior logs. Final command output is acceptable only when it directly shows the required result. Existing code, diffs, `arc lint`, compile/build output, generic test output, formatting, static search, or claims that code exists are not satisfaction evidence.
 - Consider `Implementation Hints` when reviewing implementation choices, but do not convert those hints into new formal requirements during review.
 - If evidence cannot be produced, update the `Evidence` cell with what remains unverified and why.
 - Report only mission-completion issues: missing requirements, incorrect behavior, regressions that violate the mission, or missing evidence.
