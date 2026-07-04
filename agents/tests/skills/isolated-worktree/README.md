@@ -1,6 +1,6 @@
 # Isolated Worktree Skill Tests
 
-This folder contains scenario tests for `agents/skills/isolated-worktree`.
+This folder contains scenario tests for `plugins/codewizard/skills/isolated-worktree`.
 
 Run with Codex:
 

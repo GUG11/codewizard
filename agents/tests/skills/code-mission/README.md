@@ -1,6 +1,6 @@
 # Code Mission Skill Tests
 
-This folder contains scenario tests for `agents/skills/code-mission`.
+This folder contains scenario tests for `plugins/codewizard/skills/code-mission`.
 
 Run with Codex:
 

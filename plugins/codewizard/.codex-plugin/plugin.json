@@ -1,0 +1,36 @@
+{
+  "name": "codewizard",
+  "version": "0.1.0",
+  "description": "Mission-driven coding workflows and expert skills for Codex.",
+  "author": {
+    "name": "Huayu Zhang",
+    "url": "https://github.com/GUG11"
+  },
+  "homepage": "https://github.com/GUG11/codewizard",
+  "repository": "https://github.com/GUG11/codewizard",
+  "license": "MIT",
+  "keywords": [
+    "codex",
+    "skills",
+    "mission",
+    "code-review",
+    "system-design"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "CodeWizard",
+    "shortDescription": "Mission briefs, expert review, and focused coding workflows.",
+    "longDescription": "CodeWizard bundles reusable Codex skills for deliberate coding missions, code review, system design, research, isolated worktrees, and commit or PR summaries.",
+    "developerName": "Huayu Zhang",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Use code-mission for this implementation.",
+      "Review this diff with code-review-expert.",
+      "Draft a PR summary for my changes."
+    ]
+  }
+}
