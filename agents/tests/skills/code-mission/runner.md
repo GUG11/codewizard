@@ -8,7 +8,7 @@ Evaluate whether human-invoked `code-mission` clarifies before creating a missio
 
 ## Inputs
 
-- Skill under test: `agents/skills/code-mission/SKILL.md`
+- Skill under test: `plugins/codewizard/skills/code-mission/SKILL.md`
 - Rubric: `agents/tests/skills/code-mission/rubric.md`
 - Cases: `agents/tests/skills/code-mission/cases/*.md`
 - Fixture repo: `agents/tests/skills/code-mission/fixtures/tiny-repo`

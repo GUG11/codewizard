@@ -15,9 +15,9 @@ Evaluate whether `isolated-worktree` keeps the main workflow concise while enfor
 
 ## Inputs
 
-- Skill under test: `agents/skills/isolated-worktree/SKILL.md`
-- Git reference: `agents/skills/isolated-worktree/references/git.md`
-- Sapling reference: `agents/skills/isolated-worktree/references/sapling.md`
+- Skill under test: `plugins/codewizard/skills/isolated-worktree/SKILL.md`
+- Git reference: `plugins/codewizard/skills/isolated-worktree/references/git.md`
+- Sapling reference: `plugins/codewizard/skills/isolated-worktree/references/sapling.md`
 - Rubric: `agents/tests/skills/isolated-worktree/rubric.md`
 - Cases: `agents/tests/skills/isolated-worktree/cases/*.md`
 

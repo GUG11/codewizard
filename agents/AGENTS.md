@@ -58,7 +58,7 @@
 ## Commit & Pull Request Guidelines
 - Commit messages follow bracketed tags such as `[feat] add ...`.
 - Allowed tags: `feat`, `fix`, `optimization`, `measurement`, `chore`, `log`.
-- Use the `commit-and-pr-summary` skill when the user asks to draft commit messages or pull request descriptions.
+- Use the `commit-and-pr` skill when the user asks to draft commit messages or pull request descriptions.
 - The `# Test` or `# Tests` section is human-owned. Do not fill it and do not claim tests were run by humans.
 
 ## Writing & Documentation

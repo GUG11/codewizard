@@ -1,19 +1,10 @@
 # Code Review Expert
-copied from https://github.com/sanyuan0704/code-review-expert
 
 A comprehensive code review skill for AI agents. Performs structured reviews with a senior engineer lens, covering architecture, security, performance, and code quality.
 
 ## Installation
 
-```bash
-npx skills add sanyuan0704/code-review-expert
-```
-
-Or via Agent Skills:
-
-```bash
-npx agent-skills-cli install @sanyuan0704/code-review-expert
-```
+This skill is bundled in the CodeWizard Codex plugin.
 
 ## Features
 
@@ -26,10 +17,10 @@ npx agent-skills-cli install @sanyuan0704/code-review-expert
 
 ## Usage
 
-After installation, simply run:
+After installing CodeWizard, invoke:
 
 ```
-/code-review-expert
+@code-review-expert
 ```
 
 The skill will automatically review your current git changes.
