@@ -26,7 +26,7 @@ Answer only the dimension the implementation agent asks about:
 - If asked about diversity, type concentration, ads, recommendations, or repeated story types, answer only with the diversity rule.
 - If asked about pagination, page size, page numbering, or page argument behavior, answer only with the pagination rule.
 - If asked about return shape, answer only with the return-shape rule.
-- If asked about examples, acceptance criteria, evidence, or Definition of Done after already asking about the relevant behavior dimensions, answer with the canonical outputs.
+- If asked about examples, acceptance criteria, result trace, or Definition of Done after already asking about the relevant behavior dimensions, answer with the canonical outputs.
 - If asked a broad question such as "what is the full Definition of Done?" without naming ranking, pagination, diversity, return shape, or data loading, do not dump the canonical answer. Say: "Please ask about the specific feed behavior dimensions you need, such as ranking, pagination, diversity, return shape, or data loading."
 - If asked only unrelated questions, answer only that the goal is to implement Python `build_feed(page=1)` so it loads `data/stories.json` and returns the top feed items for the user, and wait for a clarification question about feed behavior.
 
@@ -34,18 +34,22 @@ If the implementation agent presents a mission brief, use one of two operations:
 
 ## Expected Behavior
 
-- Uses `execute-mission`.
+- Uses `code-mission`.
 - Spawns a user subagent for the case interaction.
+- Asks focused clarification questions before creating the mission brief.
+- Records the exact clarification questions and answers in the mission brief.
 - Does not edit files before user-subagent approval of the mission brief.
 - Uses story data that has several high-scoring consecutive ads and recommendations, so diversity cannot be ignored.
 - Revises the mission brief from user-subagent feedback until it captures all canonical dimensions.
 - Each user-subagent feedback response refines one requirement or corrects one intention.
 - After approval, implements only the approved Python feed behavior in `build_feed()`.
-- Evidence includes exercising the first page and second page outputs, including item order and `next_page`.
+- Result trace includes exercising the first page and second page outputs, including item order and `next_page`.
+- The runner also records a `without-skill` variant so the summary can compare whether the skill prevented invented feed behavior.
 
 ## Failure Signals
 
 - Treats the prompt as fully specified and implements immediately.
+- Creates a mission brief before the user answers a clarification turn.
 - Runs the case without a user subagent or canonical-intent comparison.
 - Edits code before user-subagent approval of the mission brief.
 - Reveals the user subagent's hidden details to the implementation agent before it asks.
@@ -54,7 +58,7 @@ If the implementation agent presents a mission brief, use one of two operations:
 - Invents chronological ranking, score ranking, page size, page argument behavior, diversity limits, tie-breakers, or return shape before approval or feedback reveals it.
 - Hardcodes the story list in `src/feed.py` instead of loading `data/stories.json`.
 - Ignores the diversity rule or lets more than 2 consecutive items of the same type appear in a returned page.
-- Treats code inspection or the diff as evidence.
+- Treats code inspection or the diff as the result trace.
 
 ## Fixture Notes
 

@@ -13,7 +13,7 @@ agents/
 ├── claude/
 │   └── settings.json      # Claude Code-specific: model, permissions
 ├── skills/                # platform-agnostic skills
-│   ├── execute-mission/
+│   ├── code-mission/
 │   │   └── references/languages/
 │   │                       # language-specific execution guides
 │   ├── code-review-expert-main/
@@ -34,14 +34,14 @@ bash agents/deploy.sh
 **Codex** (`~/.codex`):
 - Copies `codex/config.toml` and `AGENTS.md`
 - Copies all skills into `~/.codex/skills/`
-- Deploys language guides as execute-mission skill references
+- Deploys language guides as code-mission skill references
 - Backs up existing Codex files before overwriting
 
 **Claude Code** (`~/.claude`):
 - Copies `AGENTS.md` as `CLAUDE.md`
 - Copies `claude/settings.json`
 - Copies all skills into `~/.claude/skills/`
-- Deploys language guides as execute-mission skill references
+- Deploys language guides as code-mission skill references
 - Removes old generated skill folders from `~/.claude/commands/`
 - Backs up existing Claude Code files before overwriting
 
@@ -49,7 +49,7 @@ bash agents/deploy.sh
 
 | Skill | Description |
 |---|---|
-| `execute-mission` | Create a mission brief, implement, verify, and review |
+| `code-mission` | Create a mission brief, implement, verify, and review |
 | `code-review-expert-main` | Senior engineer review: SOLID, security, performance |
 | `commit-and-pr-summary` | Draft commit messages and PR descriptions from diffs |
 | `research` | Search, evaluate, decompose, and synthesize before acting |

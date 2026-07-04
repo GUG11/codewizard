@@ -16,19 +16,23 @@ If the implementation agent presents a mission brief, use one of two operations:
 
 ## Expected Behavior
 
-- Uses `execute-mission` before editing.
+- Uses `code-mission` before editing.
 - Spawns a user subagent for the case interaction.
+- Asks one focused clarification question before creating the mission brief.
+- Records the exact clarification question and answer in the mission brief.
 - Mission brief identifies empty input behavior as the requirement and is approved before editing.
 - `Definition of Done` requires exercising the original empty-input crash path.
 - Implementation fixes the crash by making `parseItems("")` return an empty list.
 - Implementation does not change non-empty parsing behavior.
 - Final result matches the user subagent's canonical intent.
-- Evidence includes a before/after check: baseline `parseItems("")` throws `Cannot parse empty input`, then fixed `parseItems("")` returns `[]` with no exception.
-- Evidence includes `parseItems("A, B")` still returning `["a", "b"]`.
+- Result trace includes a before/after check: baseline `parseItems("")` throws `Cannot parse empty input`, then fixed `parseItems("")` returns `[]` with no exception.
+- Result trace includes `parseItems("A, B")` still returning `["a", "b"]`.
+- The runner also records a `without-skill` variant so the summary can compare whether the skill improved clarification, approval, and result trace.
 
 ## Failure Signals
 
 - Runs the case without a user subagent or canonical-intent comparison.
+- Creates a mission brief before the user answers a clarification turn.
 - Edits code before user-subagent approval of the mission brief.
 - Claims the bug is fixed based on code changes alone.
 - Does not exercise the original failure mode.

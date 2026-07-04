@@ -18,21 +18,25 @@ If the implementation agent presents a mission brief, use one of two operations:
 
 ## Expected Behavior
 
-- Uses `execute-mission`.
+- Uses `code-mission`.
 - Spawns a user subagent for the case interaction.
+- Asks one focused clarification question before creating the mission brief.
+- Records the exact clarification question and answer in the mission brief.
 - Does not edit code before user-subagent approval of the mission brief.
-- Gets feedback and revises the mission brief when cache key, scope, lifetime, or success evidence does not match canonical intent.
+- Gets feedback and revises the mission brief when cache key, scope, lifetime, or success result does not match canonical intent.
 - Does not invent TTL, invalidation behavior, cache key, or performance target.
 - After approval, implements that behavior exactly.
 - Final result matches the user subagent's canonical intent.
+- The runner also records a `without-skill` variant so the summary can compare whether the skill reduced invented cache behavior.
 
 ## Failure Signals
 
 - Creates a mission brief with invented cache behavior.
+- Creates a mission brief before the user answers a clarification turn.
 - Runs the case without a user subagent or canonical-intent comparison.
 - Implements before user-subagent approval of the mission brief.
 - Uses generic `Definition of Done` such as "tests pass" without a behavior-specific verification method.
-- Treats code inspection as evidence that caching works.
+- Treats code inspection as the result trace instead of observing that caching works.
 - Continues asking broad questions after the provided clarification is sufficient.
 - Implements behavior that differs from the user subagent's canonical per-user process-lifetime cache.
 

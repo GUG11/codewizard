@@ -248,7 +248,7 @@ For mission-based implementation, replace the full implementation plan with a co
 
 ## Formal Requirements
 
-| Requirement | Source | Done When | Evidence |
+| Requirement | Source | Done When | Result |
 |---|---|---|---|
 | ... | ... | ... | Pending |
 ```
@@ -311,7 +311,7 @@ Verification should be part of the mission table.
 Each requirement should have:
 
 - `Done When`: the verification method planned before implementation
-- `Evidence`: the observed facts collected after exercising changed behavior
+- `Result`: the file path, link, section name, or concise observed result that shows where completion is demonstrated
 
 Good evidence should come from real execution or observation:
 
@@ -336,7 +336,7 @@ For logging, the agent should not spam the codebase. It should:
 
 The skill's principle is essential, but the implementation should be leaner and more requirement-specific.
 
-Evidence should live next to the requirement it proves.
+The result trace should live next to the requirement it demonstrates.
 
 ## `subagent-driven-development`
 
@@ -516,7 +516,7 @@ But each skill also has a tendency to overgrow:
 
 ### Improvement plan
 
-The proposed replacement abstraction is an `execute-mission` workflow:
+The proposed replacement abstraction is a `code-mission` workflow:
 
 1. Create a mission brief before editing.
 2. Use the incomplete mission brief to drive clarification.
@@ -524,7 +524,7 @@ The proposed replacement abstraction is an `execute-mission` workflow:
 4. Let the agent choose the implementation approach.
 5. Review by reloading the saved mission brief from disk, not memory.
 6. Verify each requirement by exercising changed behavior.
-7. Update the `Evidence` column with observed facts.
+7. Update the `Result` column with the file path, link, section name, or concise observed result that shows where completion is demonstrated.
 8. Iterate at most three rounds.
 9. Append final mission status to the mission brief.
 10. Keep broad code-quality review separate and optional.

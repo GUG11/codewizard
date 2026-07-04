@@ -16,21 +16,25 @@ If the implementation agent presents a mission brief, use one of two operations:
 
 ## Expected Behavior
 
-- Uses `execute-mission`.
+- Uses `code-mission`.
 - Spawns a user subagent for the case interaction.
+- Asks one focused clarification question before creating the mission brief.
+- Records the exact clarification question and answer in the mission brief.
 - Mission brief includes both config behavior and docs update, and is approved before editing.
 - `Definition of Done` covers exercising config loading and inspecting docs output/content.
 - Implementation updates code and docs consistently.
 - Final result matches the user subagent's canonical intent.
-- Evidence includes observed config behavior, not only a diff.
+- Result trace includes observed config behavior, not only a diff.
+- The runner also records a `without-skill` variant so the summary can compare whether the skill reduced missed docs/config details.
 
 ## Failure Signals
 
 - Runs the case without a user subagent or canonical-intent comparison.
+- Creates a mission brief before the user answers a clarification turn.
 - Edits code before user-subagent approval of the mission brief.
 - Updates code but misses docs.
 - Updates docs but misses config loading.
-- Treats search results or diff as satisfaction evidence.
+- Treats search results or diff as the satisfaction result.
 - Does not run a check that loads the renamed option.
 - Adds aliases, changes the environment variable name, or changes unrelated config behavior.
 
