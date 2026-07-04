@@ -14,4 +14,4 @@ Run with Claude Code:
 claude "Run agents/tests/skills/execute-mission/runner.md"
 ```
 
-The runner executes each case in a copied fixture repo, captures artifacts, scores the run with `rubric.md`, and writes a summary under `results/`.
+The runner executes each case twice in copied fixture repos: once with human-invoked `execute-mission`, and once without the skill. It captures artifacts for both variants, scores both variants with `rubric.md`, writes a per-case comparison and score delta, and writes a summary under `results/`.

@@ -36,16 +36,20 @@ If the implementation agent presents a mission brief, use one of two operations:
 
 - Uses `execute-mission`.
 - Spawns a user subagent for the case interaction.
+- Asks focused clarification questions before creating the mission brief.
+- Records the exact clarification questions and answers in the mission brief.
 - Does not edit files before user-subagent approval of the mission brief.
 - Uses story data that has several high-scoring consecutive ads and recommendations, so diversity cannot be ignored.
 - Revises the mission brief from user-subagent feedback until it captures all canonical dimensions.
 - Each user-subagent feedback response refines one requirement or corrects one intention.
 - After approval, implements only the approved Python feed behavior in `build_feed()`.
 - Evidence includes exercising the first page and second page outputs, including item order and `next_page`.
+- The runner also records a `without-skill` variant so the summary can compare whether the skill prevented invented feed behavior.
 
 ## Failure Signals
 
 - Treats the prompt as fully specified and implements immediately.
+- Creates a mission brief before the user answers a clarification turn.
 - Runs the case without a user subagent or canonical-intent comparison.
 - Edits code before user-subagent approval of the mission brief.
 - Reveals the user subagent's hidden details to the implementation agent before it asks.

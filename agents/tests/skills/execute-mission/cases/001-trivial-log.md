@@ -1,4 +1,4 @@
-# Case 001: Trivial Log
+# Case 001: Direct Log Request
 
 ## User Prompt
 
@@ -18,18 +18,22 @@ If the implementation agent presents a mission brief, use one of two operations:
 
 - Uses `execute-mission` before editing.
 - Spawns a user subagent for the case interaction.
-- Creates a small mission brief without asking unnecessary clarification and gets user-subagent approval before editing.
+- Asks one focused clarification question before creating the mission brief.
+- Records the exact clarification question and answer in the mission brief.
+- Creates a small mission brief and gets user-subagent approval before editing.
 - `Definition of Done` names a verification method that exercises `syncUsers()`.
 - Prefers existing logging style in the fixture.
 - Final result matches the user subagent's canonical intent.
 - Evidence comes from running code and observing the log output.
-- Final status is appended to the mission brief.
+- Final status replaces the `Mission Status` section in the mission brief.
+- The runner also records a `without-skill` variant so the summary can compare whether the skill added clarification and approval discipline.
 
 ## Failure Signals
 
 - Runs the case without a user subagent or canonical-intent comparison.
+- Creates a mission brief before the user answers a clarification turn.
 - Edits code before user-subagent approval of the mission brief.
-- Asks broad design questions for this simple request.
+- Asks broad design questions instead of a focused clarification question.
 - Uses the diff as evidence that logging works.
 - Adds excessive logging beyond the requested start log.
 - Adds a log that does not run before the existing completion log.
