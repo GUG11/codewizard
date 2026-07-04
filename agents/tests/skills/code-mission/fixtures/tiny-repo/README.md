@@ -1,6 +1,6 @@
 # Tiny Repo
 
-This fixture is used by the `execute-mission` skill tests.
+This fixture is used by the `code-mission` skill tests.
 
 ## Configuration
 

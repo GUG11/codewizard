@@ -1,34 +1,34 @@
-# Execute Mission Test Runner
+# Code Mission Test Runner
 
-Use this file as the single entry point for testing `execute-mission`.
+Use this file as the single entry point for testing `code-mission`.
 
 ## Goal
 
-Evaluate whether human-invoked `execute-mission` clarifies before creating a mission brief, produces a source-traceable mission brief, implements the mission, verifies with observed facts, and reports final status without inventing requirements. Also run each case without the skill to show the behavioral difference introduced by the skill.
+Evaluate whether human-invoked `code-mission` clarifies before creating a mission brief, produces a source-traceable mission brief, implements the mission, verifies with observed facts, and reports final status without inventing requirements. Also run each case without the skill to show the behavioral difference introduced by the skill.
 
 ## Inputs
 
-- Skill under test: `agents/skills/execute-mission/SKILL.md`
-- Rubric: `agents/tests/skills/execute-mission/rubric.md`
-- Cases: `agents/tests/skills/execute-mission/cases/*.md`
-- Fixture repo: `agents/tests/skills/execute-mission/fixtures/tiny-repo`
+- Skill under test: `agents/skills/code-mission/SKILL.md`
+- Rubric: `agents/tests/skills/code-mission/rubric.md`
+- Cases: `agents/tests/skills/code-mission/cases/*.md`
+- Fixture repo: `agents/tests/skills/code-mission/fixtures/tiny-repo`
 
 ## Run Procedure
 
 1. Create a timestamped results directory:
-   `agents/tests/skills/execute-mission/results/YYYY-MM-DD-HHMMSS/`
+   `agents/tests/skills/code-mission/results/YYYY-MM-DD-HHMMSS/`
 2. Read the skill under test and the rubric.
 3. For each case file, read the case completely.
 4. For each case, run two variants:
-   - `with-skill`: explicitly invoke `execute-mission`.
-   - `without-skill`: do not load or mention `execute-mission`; give the implementation agent only the case's `User Prompt` and unavoidable harness setup.
-5. For each variant, copy `fixtures/tiny-repo` to a fresh temp workspace under `/tmp/execute-mission-tests/<case-id>-<variant>-<timestamp>/`.
+   - `with-skill`: explicitly invoke `code-mission`.
+   - `without-skill`: do not load or mention `code-mission`; give the implementation agent only the case's `User Prompt` and unavoidable harness setup.
+5. For each variant, copy `fixtures/tiny-repo` to a fresh temp workspace under `/tmp/code-mission-tests/<case-id>-<variant>-<timestamp>/`.
 6. Initialize the temp workspace as a git repo and commit the baseline:
    `git init && git add . && git -c user.name=Test -c user.email=test@example.com commit -m "baseline"`
 7. In that temp workspace, spawn a separate user subagent for every case and variant.
    Give the user subagent only the case's `User Prompt` and `User Subagent` section.
    Do not include the `User Subagent`, `Expected Behavior`, `Failure Signals`, or fixture notes in the implementation agent's prompt.
-8. For the `with-skill` variant, start the implementation agent with only the case's `User Prompt` as the task, explicitly invoking `execute-mission`.
+8. For the `with-skill` variant, start the implementation agent with only the case's `User Prompt` as the task, explicitly invoking `code-mission`.
    Do not add clarification hints, expected behavior, scoring criteria, or meta-coaching to the implementation-agent prompt.
    The implementation-agent prompt may include only unavoidable harness setup: the skill path, the temp workspace, and the exact `User Prompt`.
    If the implementation agent asks for clarification, route the exact question to the user subagent and pass back only the user subagent's answer.
@@ -59,9 +59,9 @@ Evaluate whether human-invoked `execute-mission` clarifies before creating a mis
    - `without-skill/commands.md`: commands/checks run and notable output
    - `without-skill/final.md`: final chat response/status
    - `without-skill/score.md`: rubric score and evaluator notes
-   - `comparison.md`: concise comparison of clarification, approval gate, canonical match, evidence quality, and final behavior between the two variants
+   - `comparison.md`: concise comparison of clarification, approval gate, canonical match, result trace quality, and final behavior between the two variants
 11. Score both variants with `rubric.md`.
-   For `with-skill`, full score requires the final mission brief, implementation, and evidence to match the canonical intent stated by the user subagent.
+   For `with-skill`, full score requires the final mission brief, implementation, and result trace to match the canonical intent stated by the user subagent.
    For `without-skill`, use the same rubric as a baseline measurement; it is expected to lose workflow points when it lacks clarification, mission brief, approval gate, or mission status.
    If a separate evaluator agent is available, score each variant from only that variant's artifacts and the rubric. If not, score from the artifacts after completing the run.
 12. Write `summary.md` in the timestamped results directory with:
@@ -76,10 +76,10 @@ Evaluate whether human-invoked `execute-mission` clarifies before creating a mis
 ## Rules
 
 - Do not grade from memory. Use saved artifacts.
-- Do not count source code or the diff as satisfaction evidence.
+- Do not count source code or the diff as the satisfaction result.
 - Do not fix the skill while running cases. Record failures first.
 - Prefer direct fixture commands (`node scripts/test.js`, `node scripts/build.js`) so the harness does not depend on `npm` being available.
-- Keep fixture changes inside `/tmp/execute-mission-tests/`.
+- Keep fixture changes inside `/tmp/code-mission-tests/`.
 - Leave this repository's unrelated worktree changes untouched.
 - Each variant's `transcript.md` must contain only authentic dialogue text: user turn, implementation-agent turn, user turn, implementation-agent turn.
 - Write each `transcript.md` as plain text dialogue, not as a table.
@@ -134,7 +134,7 @@ User:
 | Clarification |  |  |  |
 | Mission Brief / Approval |  |  |  |
 | Canonical Match |  |  |  |
-| Evidence Quality |  |  |  |
+| Result Trace |  |  |  |
 | Final Behavior |  |  |  |
 
 ## Takeaway

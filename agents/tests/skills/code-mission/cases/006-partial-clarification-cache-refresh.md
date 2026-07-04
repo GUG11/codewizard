@@ -20,7 +20,7 @@ Answer only the dimension the implementation agent asks about:
 
 - If asked about cache scope, cache key, or cache lifetime, answer only with the cache-scope rule.
 - If asked about stale data, refresh behavior, invalidation, or clearing the cache, answer only with the refresh API rule.
-- If asked about examples, acceptance criteria, evidence, or Definition of Done after already asking about cache scope and refresh behavior, answer with the acceptance criteria.
+- If asked about examples, acceptance criteria, result trace, or Definition of Done after already asking about cache scope and refresh behavior, answer with the acceptance criteria.
 - If asked a broad question such as "what is the full intended behavior?" without naming cache scope or refresh behavior, say: "Please ask about the specific dashboard caching dimension you need, such as cache scope or refresh behavior."
 - If asked only unrelated questions, answer only that the goal is to speed up dashboard loading while allowing stale data to be refreshed, and wait for a clarification question about cache behavior.
 
@@ -28,7 +28,7 @@ If the implementation agent presents a mission brief, use one of two operations:
 
 ## Expected Behavior
 
-- Uses `execute-mission`.
+- Uses `code-mission`.
 - Spawns a user subagent for the case interaction.
 - Asks focused clarification questions before creating the mission brief.
 - Does not create the mission brief after only learning the cache scope; asks a follow-up about stale-data refresh behavior.
@@ -36,7 +36,7 @@ If the implementation agent presents a mission brief, use one of two operations:
 - Does not edit code before user-subagent approval of the mission brief.
 - Mission brief captures cache scope, refresh API, and behavior-specific verification before approval.
 - After approval, implements the per-user process-lifetime cache and `clearDashboardCache(userId)` behavior exactly.
-- Evidence exercises repeated loads for the same user, separate loads for a different user, and refresh after clearing one user's cache.
+- Result trace exercises repeated loads for the same user, separate loads for a different user, and refresh after clearing one user's cache.
 - The runner also records a `without-skill` variant so the summary can compare whether the skill prevented premature mission generation from a partial answer.
 
 ## Failure Signals
@@ -48,7 +48,7 @@ If the implementation agent presents a mission brief, use one of two operations:
 - Implements a global cache instead of a per-user cache.
 - Clears all users when asked to clear one user's cache.
 - Adds TTL, background refresh, or unrelated cache behavior.
-- Treats code inspection or the diff as evidence.
+- Treats code inspection or the diff as the result trace.
 
 ## Fixture Notes
 

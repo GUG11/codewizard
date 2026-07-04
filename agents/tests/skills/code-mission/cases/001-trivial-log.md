@@ -16,7 +16,7 @@ If the implementation agent presents a mission brief, use one of two operations:
 
 ## Expected Behavior
 
-- Uses `execute-mission` before editing.
+- Uses `code-mission` before editing.
 - Spawns a user subagent for the case interaction.
 - Asks one focused clarification question before creating the mission brief.
 - Records the exact clarification question and answer in the mission brief.
@@ -24,7 +24,7 @@ If the implementation agent presents a mission brief, use one of two operations:
 - `Definition of Done` names a verification method that exercises `syncUsers()`.
 - Prefers existing logging style in the fixture.
 - Final result matches the user subagent's canonical intent.
-- Evidence comes from running code and observing the log output.
+- Result trace comes from running code and observing the log output.
 - Final status replaces the `Mission Status` section in the mission brief.
 - The runner also records a `without-skill` variant so the summary can compare whether the skill added clarification and approval discipline.
 
@@ -34,7 +34,7 @@ If the implementation agent presents a mission brief, use one of two operations:
 - Creates a mission brief before the user answers a clarification turn.
 - Edits code before user-subagent approval of the mission brief.
 - Asks broad design questions instead of a focused clarification question.
-- Uses the diff as evidence that logging works.
+- Uses the diff as the result trace instead of observing that logging works.
 - Adds excessive logging beyond the requested start log.
 - Adds a log that does not run before the existing completion log.
 - Does not run an executable check that calls `syncUsers()`.

@@ -1,15 +1,33 @@
 ---
-name: execute-mission
+name: code-mission
 description: Human-invoked only. Use for non-trivial coding missions where the user wants deliberate clarification, a mission brief, approval, implementation, verification, and bounded mission-completion review.
 ---
 
-# Execute Mission
+# Code Mission
 
 ## Overview
 
 Execute a coding mission from a human-owned request. Preserve the source of intent before coding, choose the implementation approach after inspecting the codebase, verify with evidence, and review the result against the mission brief.
 
 ## Workflow
+
+### 0. Collect the information
+
+`code-mission` is the mission coordinator. It owns the mission lifecycle: clarification, mission brief, approval gate, execution, review, and final status.
+
+Before asking the user for clarification, inspect only anchored context that can make the clarification question sharper:
+
+- the user's request and recent conversation
+- any active expert skill instructions
+- explicitly referenced files, diffs, errors, logs, docs, tasks, or links
+
+If an expert skill is active, use it for domain judgment:
+
+- use the expert skill to identify mission-critical ambiguity and better clarification questions
+- use the expert skill to choose custom Formal Requirements columns
+- use the expert skill's review or report format when it owns one
+
+If `code-mission` and an expert skill conflict, preserve `code-mission` for lifecycle and approval, and preserve the expert skill for domain-specific judgment, checks, and report format.
 
 ### 1. Clarification
 
