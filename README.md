@@ -38,7 +38,7 @@ plugins/
 Install from the GitHub-hosted Codex marketplace:
 
 ```bash
-codex plugin marketplace add GUG11/codewizard --ref main
+codex plugin marketplace add GUG11/codewizard --ref master
 codex plugin add codewizard@codewizard
 ```
 
