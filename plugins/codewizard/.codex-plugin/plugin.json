@@ -17,6 +17,7 @@
     "system-design"
   ],
   "skills": "./skills/",
+  "hooks": "./hooks/hooks.json",
   "interface": {
     "displayName": "CodeWizard",
     "shortDescription": "Mission briefs, expert review, and focused coding workflows.",

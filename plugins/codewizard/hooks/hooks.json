@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Bash|apply_patch|Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$PLUGIN_ROOT/hooks/guard_mission_brief.py\"",
+            "timeout": 30,
+            "statusMessage": "Checking code-mission brief"
+          }
+        ]
+      }
+    ]
+  }
+}
