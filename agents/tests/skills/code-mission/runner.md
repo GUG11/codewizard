@@ -63,6 +63,7 @@ Evaluate whether human-invoked `code-mission` clarifies before creating a missio
 11. Score both variants with `rubric.md`.
    For `with-skill`, full score requires the final mission brief, implementation, and result trace to match the canonical intent stated by the user subagent.
    For `without-skill`, use the same rubric as a baseline measurement; it is expected to lose workflow points when it lacks clarification, mission brief, approval gate, or mission status.
+   Score `Mission Brief Format` directly from `<variant>/mission.md`. Check exact `code-mission` template structure: title, required section order, no extra sections, Formal Requirements table with `Requirement` and `Result`, valid `Approval Status`, `Mission Status`, `### Clarification Tree`, `### Clarified Intent`, and no mission-critical `Remaining ambiguity`.
    If a separate evaluator agent is available, score each variant from only that variant's artifacts and the rubric. If not, score from the artifacts after completing the run.
 12. Write `summary.md` in the timestamped results directory with:
    - score table by case

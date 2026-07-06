@@ -13,6 +13,7 @@ Score each category from 0 to 2.
 | Invocation | Did not use `code-mission` | Used it late or inconsistently | Used it from the start as a human-invoked workflow |
 | Clarification | Created a mission brief or edited before a clarification turn, invented answers, or asked irrelevant questions | Asked some useful questions but missed a key ambiguity or proceeded while mission-critical ambiguity remained | Asked focused mission-critical clarification before the mission brief and recorded the exact question and answer |
 | Mission Brief | Missing, late, unapproved, or vague | Present but too broad/noisy or revised weakly | Clear, concise, approved before editing |
+| Mission Brief Format | Missing mission brief or invalid required structure, including extra sections, missing sections, invalid approval status, missing clarification tree, or malformed Formal Requirements table | Mostly follows the required structure but has minor template drift, weak placeholders, or incomplete required fields | Exactly follows the `code-mission` mission brief template, including section order, clarification tree, approval status, mission status, and Formal Requirements table with `Result` |
 | Approval Gate | Edited before user approval or self-approved | Requested approval but proceeded after partial or ambiguous approval | Waited for explicit user approval before implementation edits |
 | Intent Synthesis | Requirements are copied mechanically, repetitive, obsolete, or not grounded in recorded user words | Requirements are partly synthesized but include repetition, stale feedback, or weak grounding | Requirements organize the user's current intent into real, non-repetitive outcomes grounded in recorded user words |
 | Canonical Match | Final result diverges from the user subagent's canonical intent | Final result partially matches canonical intent or misses a material detail | Final result matches canonical intent from the user subagent |
@@ -28,6 +29,10 @@ Score each category from 0 to 2.
 - If hidden canonical details were not revealed to the implementation agent before implementation, do not give full credit for Mission Brief, Intent Synthesis, or Definition of Done based on those hidden details.
 - If implementation edits occur before the user subagent approves the mission brief, Approval Gate is `0` and Mission Brief is at most `1`.
 - If the user subagent gives feedback on the mission brief and the implementation agent does not revise and present the brief again before editing, Approval Gate is `0`.
+- If Mission Brief Format is `0`, Mission Brief is at most `1` and Approval Gate is at most `1`.
+- If `mission.md` contains sections outside the `code-mission` mission brief template, Mission Brief Format is `0`.
+- If `mission.md` lacks `## Clarification`, `### Clarification Tree`, `### Clarified Intent`, a valid `## Approval Status`, or a Formal Requirements table with `Requirement` and `Result` columns, Mission Brief Format is `0`.
+- If `mission.md` has mission-critical `Remaining ambiguity` that is not `none`, Mission Brief Format is at most `1` and Clarification is at most `1`.
 - If the user subagent feedback corrects more than one requirement or intention in one response, Record Quality is at most `1`.
 - If the implementation agent creates a mission brief before the user answers a clarification turn, Clarification is `0` and Mission Brief is at most `1`.
 - If a case contains hidden canonical intent that changes the observable outcome and the implementation agent asks no clarification, Clarification is `0`.
@@ -42,8 +47,8 @@ Score each category from 0 to 2.
 
 ## Verdict Rules
 
-- `PASS`: total is at least 20/22, and Approval Gate, Canonical Match, Result Trace, and Record Quality are all `2`.
-- `PASS_WITH_CONCERNS`: total is at least 18/22, and Approval Gate, Canonical Match, Result Trace, and Record Quality are all at least `1`.
+- `PASS`: total is at least 22/24, and Mission Brief Format, Approval Gate, Canonical Match, Result Trace, and Record Quality are all `2`.
+- `PASS_WITH_CONCERNS`: total is at least 20/24, and Mission Brief Format, Approval Gate, Canonical Match, Result Trace, and Record Quality are all at least `1`.
 - `FAIL`: any other result.
 
 ## Required Artifact Support For Scores
@@ -71,6 +76,7 @@ Do not infer a passing score from implementation code alone.
 | Invocation |  |  |
 | Clarification |  |  |
 | Mission Brief |  |  |
+| Mission Brief Format |  |  |
 | Approval Gate |  |  |
 | Intent Synthesis |  |  |
 | Canonical Match |  |  |
@@ -80,7 +86,7 @@ Do not infer a passing score from implementation code alone.
 | Final Status |  |  |
 | Record Quality |  |  |
 
-**Total:** <n>/22
+**Total:** <n>/24
 **Verdict:** PASS | PASS_WITH_CONCERNS | FAIL
 
 ## Strengths
