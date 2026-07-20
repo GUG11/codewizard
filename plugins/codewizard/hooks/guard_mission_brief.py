@@ -21,16 +21,15 @@ ALLOWED_TOP_SECTIONS = [
     "User Feedback",
 ]
 ALLOWED_CLARIFICATION_SUBSECTIONS = ["Clarification Tree", "Clarified Intent"]
-CLARIFICATION_MARKERS = ("- ", "  - Asked:", "  - Answered:", "  - Updated understanding:", "  - Remaining ambiguity:")
 ACTION_BY_FAILURE_CODE = {
     "approval_status": "Set a valid Approval Status based on the current situation. Zero tolerance for forging the user's approval",
     "clarification_sections": "Rewrite the Clarification section to contain only ### Clarification Tree and ### Clarified Intent.",
-    "clarification_tree": "Repair the Clarification Tree with the required Asked, Answered, Updated understanding, and Remaining ambiguity entries.",
+    "clarification_tree": "Repair the Clarification Tree as recursive Question, Answer, Updated understanding, and Follow-ups nodes.",
     "formal_requirements": "Repair Formal Requirements as a table with Requirement and Result columns.",
     "missing_clarification": "Start the code-mission clarification process with the user before creating or revising the mission brief.",
-    "remaining_ambiguity": "Go back to the user and resolve the remaining mission-critical ambiguity before revising the mission brief.",
     "title": "Change the title to '# Mission Brief: <short title>'.",
     "top_sections": "Rewrite the mission brief to match the template exactly; remove sections not defined by the template.",
+    "unresolved_clarification": "Go back to the user and resolve every open clarification branch before revising the mission brief.",
     "unreadable": "Rewrite the latest mission brief file so it is readable at the expected path.",
 }
 
@@ -54,13 +53,27 @@ class Failure(NamedTuple):
     message: str
 
 
+class TreeLine(NamedTuple):
+    number: int
+    indent: int
+    content: str
+
+
+class ClarificationTreeError(ValueError):
+    pass
+
+
+class UnresolvedClarificationError(ClarificationTreeError):
+    pass
+
+
 def main() -> int:
     payload = read_payload()
-    latest = latest_mission_path()
-    if latest is None or latest not in updated_paths(payload):
+    paths = updated_mission_paths(payload)
+    if not paths:
         return 0
 
-    failures = validate_mission_path(latest)
+    failures = [failure for path in sorted(paths) for failure in validate_mission_path(path)]
 
     if failures:
         print_blocked_action(failures)
@@ -101,14 +114,13 @@ def validate_mission_path(path: Path) -> list[Failure]:
     ]
 
 
-def latest_mission_path() -> Path | None:
-    try:
-        files = [path for path in MISSION_DIR.iterdir() if path.is_file() and path.suffix == ".md"]
-    except OSError:
-        return None
-    if not files:
-        return None
-    return max(files, key=lambda path: (path.stat().st_mtime_ns, path.name)).resolve()
+def updated_mission_paths(payload: dict[str, Any]) -> set[Path]:
+    mission_dir = MISSION_DIR.resolve()
+    return {
+        path
+        for path in updated_paths(payload)
+        if path.parent == mission_dir and path.suffix == ".md"
+    }
 
 
 def parse_mission_brief(text: str) -> ParsedBrief:
@@ -180,17 +192,111 @@ def validate_mission_brief(brief: ParsedBrief) -> list[Failure]:
 
 
 def validate_clarification_tree(brief: ParsedBrief) -> list[Failure]:
-    failures: list[Failure] = []
     tree = brief.clarification_sections.get("Clarification Tree", "")
     if not tree:
         return [Failure("clarification_tree", "missing ### Clarification Tree subsection")]
 
-    for marker in CLARIFICATION_MARKERS:
-        if marker not in tree:
-            failures.append(Failure("clarification_tree", f"Clarification Tree must include '{marker.strip()}'"))
-    if not re.search(r"(?mi)^\s+- Remaining ambiguity:\s*none\s*$", tree):
-        failures.append(Failure("remaining_ambiguity", "mission brief cannot be created while Remaining ambiguity is not exactly 'none'"))
-    return failures
+    try:
+        parse_clarification_tree(tree)
+    except UnresolvedClarificationError as exc:
+        return [Failure("unresolved_clarification", str(exc))]
+    except ClarificationTreeError as exc:
+        return [Failure("clarification_tree", str(exc))]
+    return []
+
+
+def parse_clarification_tree(tree: str) -> None:
+    lines = clarification_tree_lines(tree)
+    if not lines:
+        raise ClarificationTreeError("Clarification Tree must contain at least one Question node")
+    next_index = parse_question_nodes(lines, 0, 0)
+    if next_index != len(lines):
+        line = lines[next_index]
+        raise ClarificationTreeError(f"Clarification Tree line {line.number} has unexpected indentation or content: {line.content}")
+
+
+def clarification_tree_lines(tree: str) -> list[TreeLine]:
+    lines: list[TreeLine] = []
+    for number, raw_line in enumerate(tree.splitlines(), start=1):
+        if not raw_line.strip():
+            continue
+        content = raw_line.lstrip(" ")
+        indent = len(raw_line) - len(content)
+        if content.startswith("\t"):
+            raise ClarificationTreeError(f"Clarification Tree line {number} must use spaces for indentation")
+        lines.append(TreeLine(number=number, indent=indent, content=content.rstrip()))
+    return lines
+
+
+def parse_question_nodes(lines: list[TreeLine], index: int, indent: int) -> int:
+    node_count = 0
+    while index < len(lines):
+        line = lines[index]
+        if line.indent < indent:
+            break
+        if line.indent > indent:
+            raise ClarificationTreeError(f"Clarification Tree line {line.number} has unexpected indentation")
+        if not line.content.startswith("- Question:"):
+            raise ClarificationTreeError(f"Clarification Tree line {line.number} must start a Question node")
+        index = parse_question_node(lines, index, indent)
+        node_count += 1
+    if node_count == 0:
+        line_number = lines[index].number if index < len(lines) else lines[-1].number
+        raise UnresolvedClarificationError(
+            f"Clarification Tree line {line_number} must contain a nested Question node or declare 'Follow-ups: none'"
+        )
+    return index
+
+
+def parse_question_node(lines: list[TreeLine], index: int, indent: int) -> int:
+    question, index = parse_tree_field(lines, index, indent, "Question")
+    answer, index = parse_tree_field(lines, index, indent + 2, "Answer")
+    understanding, index = parse_tree_field(lines, index, indent + 2, "Updated understanding")
+    follow_ups, index = parse_tree_field(lines, index, indent + 2, "Follow-ups", allow_empty=True)
+
+    for field_name, value in (
+        ("Question", question),
+        ("Answer", answer),
+        ("Updated understanding", understanding),
+    ):
+        if is_placeholder(value):
+            raise UnresolvedClarificationError(
+                f"Clarification Tree {field_name} must contain resolved content instead of a placeholder"
+            )
+
+    if follow_ups.casefold() == "none":
+        return index
+    if follow_ups:
+        raise UnresolvedClarificationError(
+            "Clarification Tree Follow-ups must be nested Question nodes or exactly 'none'"
+        )
+    return parse_question_nodes(lines, index, indent + 4)
+
+
+def parse_tree_field(
+    lines: list[TreeLine],
+    index: int,
+    indent: int,
+    field_name: str,
+    allow_empty: bool = False,
+) -> tuple[str, int]:
+    if index >= len(lines):
+        raise ClarificationTreeError(f"Clarification Tree ended before '- {field_name}:'")
+    line = lines[index]
+    prefix = f"- {field_name}:"
+    if line.indent != indent or not line.content.startswith(prefix):
+        raise ClarificationTreeError(
+            f"Clarification Tree line {line.number} must be indented {indent} spaces and start with '{prefix}'"
+        )
+    value = line.content[len(prefix) :].strip()
+    if not value and not allow_empty:
+        raise UnresolvedClarificationError(f"Clarification Tree line {line.number} has an empty {field_name}")
+    return value, index + 1
+
+
+def is_placeholder(value: str) -> bool:
+    stripped = value.strip()
+    return bool(re.fullmatch(r"<[^>]+>", stripped)) or stripped.casefold() in {"pending", "tbd", "unresolved"}
 
 
 def read_payload() -> dict[str, Any]:

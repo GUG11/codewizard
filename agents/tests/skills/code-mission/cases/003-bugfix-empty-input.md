@@ -18,8 +18,8 @@ If the implementation agent presents a mission brief, use one of two operations:
 
 - Uses `code-mission` before editing.
 - Spawns a user subagent for the case interaction.
-- Asks one focused clarification question before creating the mission brief.
-- Records the exact clarification question and answer in the mission brief.
+- Asks one clarification question at a time until every applicable branch is resolved.
+- Records the exact traversed question tree, including every question and answer, in the mission brief.
 - Mission brief identifies empty input behavior as the requirement and is approved before editing.
 - `Definition of Done` requires exercising the original empty-input crash path.
 - Implementation fixes the crash by making `parseItems("")` return an empty list.
@@ -32,7 +32,7 @@ If the implementation agent presents a mission brief, use one of two operations:
 ## Failure Signals
 
 - Runs the case without a user subagent or canonical-intent comparison.
-- Creates a mission brief before the user answers a clarification turn.
+- Creates a mission brief before the adaptive clarification sequence is complete.
 - Edits code before user-subagent approval of the mission brief.
 - Claims the bug is fixed based on code changes alone.
 - Does not exercise the original failure mode.

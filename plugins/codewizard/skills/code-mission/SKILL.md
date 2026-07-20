@@ -7,35 +7,13 @@ description: Human-invoked only. Use for non-trivial coding missions where the u
 
 ## Overview
 
-Execute a coding mission from a human-owned request. Preserve the source of intent before coding, choose the implementation approach after inspecting the codebase, verify with evidence, and review the result against the mission brief.
+Execute a coding mission from a human-owned request. Preserve the source of intent before coding, choose the implementation approach after inspecting the codebase, verify with evidence, and review the result against the mission brief. This skill is human-invoked only. When invoked, treat the request as non-trivial and ambiguity-prone.
 
 ## Workflow
-
-### 0. Collect the information
-
-`code-mission` is the mission coordinator. It owns the mission lifecycle: clarification, mission brief, approval gate, execution, review, and final status.
-
-Before asking the user for clarification, inspect only anchored context that can make the clarification question sharper:
-
-- the user's request and recent conversation
-- any active expert skill instructions
-- explicitly referenced files, diffs, errors, logs, docs, tasks, or links
-
-If an expert skill is active, use it for domain judgment:
-
-- use the expert skill to identify mission-critical ambiguity and better clarification questions
-- use the expert skill to choose custom Formal Requirements columns
-- use the expert skill's review or report format when it owns one
-
-If `code-mission` and an expert skill conflict, preserve `code-mission` for lifecycle and approval, and preserve the expert skill for domain-specific judgment, checks, and report format.
-
 ### 1. Clarification
+Before creating the mission brief, complete the adaptive clarification sequence with the user. Follow [How to Clarify](references/how-to-clarify.md). Preserve every exact clarification question and user answer in the mission brief's Clarification Tree.
 
-This skill is human-invoked only. When invoked, treat the request as non-trivial and ambiguity-prone.
-
-Before creating the mission brief, complete a clarification turn with the user. Follow [How to Clarify](references/how-to-clarify.md). Record the exact clarification question and user answer for the mission brief.
-
-Do not create the mission brief while the Clarification Tree contains mission-critical `Remaining ambiguity`. Ask the next focused clarification question first.
+Do not create the mission brief until every applicable branch of the question tree is resolved. Ask the next question on the current branch first.
 
 ### 2. Create and approve the mission brief
 
@@ -65,11 +43,18 @@ Pending. Filled when the mission is complete.
 ## Clarification
 
 ### Clarification Tree
-- <mission-critical ambiguity>: <why this must be clarified before the mission brief>
-  - Asked: <verbatim clarification question>
-  - Answered: <verbatim user answer>
+- Question: <verbatim top-level clarification question>
+  - Answer: <verbatim user answer>
   - Updated understanding: <what this answer makes clearer>
-  - Remaining ambiguity: <none, or the next follow-up question needed before the mission brief>
+  - Follow-ups:
+    - Question: <verbatim follow-up question triggered by the parent answer>
+      - Answer: <verbatim user answer>
+      - Updated understanding: <what this answer makes clearer>
+      - Follow-ups: none
+- Question: <verbatim independent top-level clarification question, if one was asked>
+  - Answer: <verbatim user answer>
+  - Updated understanding: <what this answer makes clearer>
+  - Follow-ups: none
 
 ### Clarified Intent
 <concise synthesis of the current mission intent after clarification>
@@ -78,6 +63,8 @@ Pending. Filled when the mission is complete.
 
 - Round <n>: <verbatim user feedback or explicit approval of the mission brief>
 ```
+
+The `Clarification Tree` records only the subset of the question tree actually traversed with the user. The section is the implicit root. Put independent questions at the top level, and nest each follow-up beneath the question whose answer triggered it. When one answer triggers multiple follow-up branches, record them as sibling child nodes. Every node must contain the exact question, exact answer, updated understanding, and either nested follow-up nodes or `Follow-ups: none`. Preserve the wording and order of every answer choice. Markdown layout and punctuation may be normalized when meaning is unchanged; do not omit, summarize, reorder, or semantically rewrite choices. Non-disclosing harness metadata such as `CTX:` is not part of the question or answer. Every leaf must end with `Follow-ups: none` before the mission brief is created. Do not record hypothetical or unasked branches.
 
 For feedback and approval, record the user's exact words.
 
@@ -94,6 +81,8 @@ Approval status values:
 - `Pending`: the current mission brief has not been explicitly approved.
 - `Approved`: the user explicitly approved the current mission brief.
 - `Rejected`: the user rejected, questioned, or requested changes to the current mission brief. After revising the brief, reset `Approval Status` to `Pending`.
+
+Once `Approval Status` is `Approved`, that mission is the canonical mission for the current thread. Feedback that the implementation is overengineered, incorrect, incomplete, or otherwise poorly executed corrects the implementation; it does not create a new mission or revise the approved intent. Correct and reverify the implementation against the existing mission. Continue updating only the workflow-owned `Result` and `Mission Status` fields when required. Start a new thread for a genuinely new mission.
 
 
 Example: One-Intent Implementation Request
@@ -133,7 +122,9 @@ Approval must clearly approve the current mission brief; otherwise treat the mes
 
 When the brief can be filled concretely, write it to:
 
-`MISSION_BRIEF_PATH=/tmp/docs/missions/YYYY-MM-DD-<short-slug>.md`
+`MISSION_BRIEF_PATH=${CODE_MISSION_DIR:-/tmp/docs/missions}/${CODEX_THREAD_ID}.md`
+
+Expand the environment variables when constructing the path. `CODEX_THREAD_ID` makes the mission path canonical for the current conversation thread.
 
 Keep `MISSION_BRIEF_PATH` as the exact path to the saved brief for review and final reporting. Present it to the user for approval before implementation. Do not edit project files beyond the mission brief until the user explicitly approves the current brief.
 
