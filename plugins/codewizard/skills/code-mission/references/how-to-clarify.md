@@ -1,42 +1,80 @@
 # How to Clarify
 
-Usually the user's initial ask has ambiguity, so proactively ask for clarification to narrow the scope and avoid back and forth during execution. Ask in a way that makes the user think less because you have thought ahead.
+The user's initial request is usually ambiguous. Proactively clarify it to narrow the scope and avoid back-and-forth during execution. Think ahead and ask questions that minimize the user's effort.
 
-## Organize your questions
+## Focus on the User's Intent
 
-Think hierarchically, but ask and record selectively. Identify the mission-critical ambiguities that would change the mission brief if answered differently. Ask the smallest question that resolves the highest-impact ambiguity first.
+Use the full clarification sequence to develop a complete understanding of the user's intent. Focus on what the user wants to achieve rather than asking them to design implementation methods or test plans.
 
-Use a clarification tree to structure the result:
+**Bad question:** `Should I test 10 requests on Android?`
 
-- <mission-critical ambiguity>: <why this must be clarified before the mission brief>
-  - Asked: <verbatim clarification question>
-  - Answered: <verbatim user answer>
-  - Updated understanding: <what this answer makes clearer>
-  - Remaining ambiguity: <none, or the next follow-up question needed before the mission brief>
+Do not ask this question. It delegates a test-plan decision to the user instead of clarifying their intent. Establish the feature's implementation scope, such as whether it applies to Android, iOS, or both. Then clarify the user's desired level of test rigor, such as comprehensive edge-case coverage or a small set of representative cases that confirm the new code is exercised and behaves correctly. Use both to derive the testing requirements and propose an appropriate test plan.
 
-Do not record private reasoning or a reconstructed reasoning tree in the mission brief. Record the ambiguity, exact question, exact user answer, updated understanding, and any remaining ambiguity. If a mission-critical ambiguity remains, ask a follow-up question before creating the mission brief.
+**Bad question:** `Should I add diagnostic logging?`
 
-## Ask good question
+This asks the user to choose an implementation step when their actual goal is to understand why the value changed. Logging may support that investigation, but it is not the goal.
 
-Ask only one question each time. Think ahead for the user and reduce the effort needed to answer. Prefer easy answer shapes in this order:
+## Reduce the User's Burden
 
-- Binary judgment: the user replies yes or no.
-- Single choice: the user makes one decision from a few choices.
-- Multiple choice: the user chooses multiple candidates.
-- Description: the user needs to articulate the thought.
+Ask one question at a time. Base its answer choices on prior research and careful reasoning. Include `Other` as the final option in case none of the listed options reflects the user's intent.
 
-Ask as small a question as possible. Big questions usually require long descriptions to address all ambiguity. Use small answers to synthesize the larger mission intent.
+**Bad example:**
 
-### Questions Example
-| What you want to clarify | Bad Question | Why bad | Convert to Good Question |
-|---|---|---|---|
-| Whether a troubleshooting prompt has enough concrete input to start. | `Please approve the current brief before I edit project files or start the local service run.` | It asks for workflow approval before clarifying the symptom anchor or request scope. It can turn an ambiguous debugging request into a plan that looks concrete but contains invented defaults. | `For bypassAllowed=false, what is the best anchor you have: original log line, DB query row, request shape, or only a general observation?` |
-| Which part of a troubleshooting prompt blocks execution first. | `1. What request shape produces the symptom? 2. What concrete anchor should I reproduce? 3. Should the final diff keep production logging?` | Each question may be valid, but asking all of them at once makes the user manage the conversation structure. It also mixes symptom, reproduction, and final-diff decisions. | `What is the best starting clue for bypassAllowed=false? A useful answer can be as small as: android request, a DB query row, or "I only saw it while reading local logs."` |
-| Whether the user wants root-cause debugging or an implementation action. | `Should I add diagnostic logging?` | It asks about an action while the user's real intent is to debug why the value changed. Logging may be a tool, but it is not the goal. | `Is your goal to find why the value becomes false, or to design a logging/product change around that value?` |
-| The test plan | `I will start with the android request and keep trying other request shapes if it misses.` | `Yes, start with that` authorizes the starter query. It does not authorize inventing the next traffic slice after a miss. | `If the starter android request does not reproduce bypassAllowed=false, should I stop with artifacts, or may I expand to another request family?` |
-| How broad the parameter search may be after the user says to try different requests. | `I will try different parameters until I find one.` | It accepts broad discretion without naming which parameters may vary. That can silently cross the user's intended scope. | `A concrete option is: vary platform across android, ios, web; vary item count across 5, 10, 20; run freshload followed by continuous requests using cursors; keep the rest empty unless evidence points to a specific parameters. Is that search space ok?` |
+1. What request shape produces the symptom?
+2. What concrete anchor should I reproduce?
+3. Should the final diff retain production logging?
 
+Each question may address a valid ambiguity, but asking all three at once forces the user to manage the structure of the conversation. It also mixes questions about the symptom, reproduction process, and final diff.
 
-## Thoroughly clarify every ambiguity before move to the next one
+## Address Ambiguity
 
-Proactively identify ambiguity. Do not guess user intent. Check the user's words, code, docs, and data, and use verified facts where available. If the user's reply is still ambiguous, keep asking follow-up questions until the current mission-critical ambiguity is clear. Ask good questions instead of bombarding users with many low-quality questions.
+Do not assume anything. Treat every verb and object in the user's prompt as an ambiguity that must be clarified. Prefer overcommunication to undercommunication.
+
+Break a broad request into an adaptive question tree rather than a fixed questionnaire. Ask only the question at the current node, then use the user's answer to add, remove, or refine the follow-up branches. Continue until all applicable nodes and their descendants are resolved.
+
+When creating the mission brief, record only the subset of the adaptive question tree actually traversed with the user. Put independent questions at the top level and nest each follow-up beneath the question whose answer triggered it. Do not record hypothetical or unasked branches.
+
+The example below demonstrates the structure of an adaptive question tree. It is not a fixed list of questions that must all be asked. The actual clarification path follows only the subset of branches made relevant by the user's choices.
+
+**Example request:** `Implement an Uber-like service`
+
+Build a hierarchy like this:
+
+- What should `implement` produce?
+  - A system design
+  - A working prototype
+  - A production-ready service
+  - `Other`
+- Which functional workflows must be included?
+  - Requesting a ride
+    - What information must the request contain?
+      - Pickup location
+      - Drop-off location
+      - `Other`
+  - Matching a rider with a driver
+    - Which drivers are eligible for matching?
+      - Currently available drivers
+      - Drivers who will be available soon
+        - How should `soon` be defined?
+          - The driver can arrive at the pickup location within 15 minutes
+          - The driver can finish their current ride within 5 minutes
+          - `Other`
+      - Any driver
+      - `Other`
+    - How should matches be prioritized?
+      - Proximity
+      - Price
+      - Rating
+      - `Other`
+  - Accepting a ride
+  - Picking up the rider
+    - How long should the rider's grace period be?
+      - 5 minutes
+      - `Other`
+  - Dropping off the rider
+  - `Other`
+- Which non-functional areas require explicit targets?
+  - Expected number of daily active users
+  - Latency
+  - Availability
+  - `Other`

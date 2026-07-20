@@ -11,5 +11,3 @@
 - Do not guess when facts are missing. Flag gaps.
 - Do not claim confidence without evidence from code, documents, tests, documentation, or direct verification.
 - Do not refactor or reformat code unless explicitly instructed.
-- Do not introduce new dependencies unless they are necessary and the user explicitly approves them first.
-- Do not write explanatory comments except for command snippets that teach how to run scripts.

@@ -36,8 +36,8 @@ If the implementation agent presents a mission brief, use one of two operations:
 
 - Uses `code-mission`.
 - Spawns a user subagent for the case interaction.
-- Asks focused clarification questions before creating the mission brief.
-- Records the exact clarification questions and answers in the mission brief.
+- Asks one clarification question at a time until every applicable branch is resolved.
+- Records the exact traversed question tree, including every question and answer, in the mission brief.
 - Does not edit files before user-subagent approval of the mission brief.
 - Uses story data that has several high-scoring consecutive ads and recommendations, so diversity cannot be ignored.
 - Revises the mission brief from user-subagent feedback until it captures all canonical dimensions.
@@ -49,7 +49,7 @@ If the implementation agent presents a mission brief, use one of two operations:
 ## Failure Signals
 
 - Treats the prompt as fully specified and implements immediately.
-- Creates a mission brief before the user answers a clarification turn.
+- Creates a mission brief before the adaptive clarification sequence is complete.
 - Runs the case without a user subagent or canonical-intent comparison.
 - Edits code before user-subagent approval of the mission brief.
 - Reveals the user subagent's hidden details to the implementation agent before it asks.

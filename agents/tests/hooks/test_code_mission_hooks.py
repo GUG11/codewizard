@@ -51,11 +51,22 @@ def brief(status: str = "Pending", extra_section: str = "", omit_clarification: 
         ## Clarification
 
         ### Clarification Tree
-        - Desired sample behavior: needed to define the observable outcome.
-          - Asked: What should the sample command return?
-          - Answered: It should return `ok`.
+        - Question: What should the sample command return?
+          - Answer: It should return `ok`.
           - Updated understanding: The mission is to make `sample --check` return `ok`.
-          - Remaining ambiguity: none
+          - Follow-ups:
+            - Question: Should the behavior apply only to `sample --check`?
+              - Answer: Yes.
+              - Updated understanding: Other sample command behavior is outside the mission.
+              - Follow-ups: none
+            - Question: Should existing error behavior change?
+              - Answer: No.
+              - Updated understanding: Existing error behavior must remain unchanged.
+              - Follow-ups: none
+        - Question: Should the output include a trailing newline?
+          - Answer: No.
+          - Updated understanding: The command must print exactly `ok`.
+          - Follow-ups: none
 
         ### Clarified Intent
         Make the sample check return `ok`.
@@ -104,13 +115,17 @@ class CodeMissionHooksTest(unittest.TestCase):
     ) -> list[subprocess.CompletedProcess[str]]:
         return [self.run_hook_command(command, payload, mission_dir, cwd) for command in hook_commands(event)]
 
-    def test_hooks_json_has_post_tool_mission_file_commands(self) -> None:
+    def test_hooks_json_has_pre_and_post_tool_mission_file_commands(self) -> None:
         plugin = json.loads(PLUGIN_JSON.read_text(encoding="utf-8"))
         self.assertEqual(plugin["hooks"], "./hooks/hooks.json")
 
         hooks = json.loads(HOOKS_JSON.read_text(encoding="utf-8"))["hooks"]
-        self.assertNotIn("PreToolUse", hooks)
+        pre = hook_commands("PreToolUse")
         post = hook_commands("PostToolUse")
+        self.assertEqual(
+            pre,
+            ['python3 "$PLUGIN_ROOT/hooks/guard_mission_identity.py"'],
+        )
         self.assertEqual(
             post,
             ['python3 "$PLUGIN_ROOT/hooks/guard_mission_brief.py"'],
@@ -124,9 +139,9 @@ class CodeMissionHooksTest(unittest.TestCase):
             "clarification_tree",
             "formal_requirements",
             "missing_clarification",
-            "remaining_ambiguity",
             "title",
             "top_sections",
+            "unresolved_clarification",
             "unreadable",
         }
         self.assertEqual(set(guard.ACTION_BY_FAILURE_CODE), failure_codes)
@@ -239,13 +254,13 @@ class CodeMissionHooksTest(unittest.TestCase):
             self.assertEqual(results[0].returncode, 2, results[0].stderr)
             self.assertIn("missing ## Clarification section", results[0].stderr)
 
-    def test_post_tool_reports_all_clarification_tree_failures(self) -> None:
+    def test_post_tool_rejects_malformed_clarification_tree(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             mission_dir = Path(tmp) / "missions"
             mission_dir.mkdir()
             mission_path = mission_dir / "brief.md"
             mission_path.write_text(
-                brief().replace("  - Answered: It should return `ok`.\n", "").replace("  - Remaining ambiguity: none\n", ""),
+                brief().replace("  - Answer: It should return `ok`.\n", ""),
                 encoding="utf-8",
             )
             payload = {
@@ -255,12 +270,92 @@ class CodeMissionHooksTest(unittest.TestCase):
             }
             results = self.run_event("PostToolUse", payload, mission_dir)
             self.assertEqual(results[0].returncode, 2, results[0].stderr)
-            self.assertIn("Clarification Tree must include '- Answered:'", results[0].stderr)
-            self.assertIn("Clarification Tree must include '- Remaining ambiguity:'", results[0].stderr)
-            self.assertIn("mission brief cannot be created while Remaining ambiguity is not exactly 'none'", results[0].stderr)
-            self.assertIn("Go back to the user and resolve the remaining mission-critical ambiguity before revising the mission brief.", results[0].stderr)
+            self.assertIn(
+                "Repair the Clarification Tree as recursive Question, Answer, Updated understanding, and Follow-ups nodes.",
+                results[0].stderr,
+            )
+            self.assertIn("must be indented 2 spaces and start with '- Answer:'", results[0].stderr)
 
-    def test_post_tool_validates_latest_mission_file_only(self) -> None:
+    def test_post_tool_rejects_unresolved_clarification_leaf(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            mission_dir = Path(tmp) / "missions"
+            mission_dir.mkdir()
+            mission_path = mission_dir / "brief.md"
+            mission_path.write_text(
+                brief().replace("      - Follow-ups: none\n", "      - Follow-ups: pending\n", 1),
+                encoding="utf-8",
+            )
+            payload = {
+                "hook_event_name": "PostToolUse",
+                "tool_name": "Write",
+                "tool_input": {"file_path": str(mission_path)},
+            }
+            results = self.run_event("PostToolUse", payload, mission_dir)
+            self.assertEqual(results[0].returncode, 2, results[0].stderr)
+            self.assertIn(
+                "Go back to the user and resolve every open clarification branch before revising the mission brief.",
+                results[0].stderr,
+            )
+            self.assertIn("Follow-ups must be nested Question nodes or exactly 'none'", results[0].stderr)
+
+    def test_recursive_clarification_tree_rejects_linear_legacy_shape(self) -> None:
+        guard = load_guard_module()
+        legacy_tree = textwrap.dedent(
+            """\
+            - Desired sample behavior: needed to define the observable outcome.
+              - Asked: What should the sample command return?
+              - Answered: It should return `ok`.
+              - Updated understanding: The command should return `ok`.
+              - Remaining ambiguity: none
+            """
+        )
+        with self.assertRaisesRegex(guard.ClarificationTreeError, "must start a Question node"):
+            guard.parse_clarification_tree(legacy_tree)
+
+    def test_recursive_clarification_tree_rejects_malformed_child_indentation(self) -> None:
+        guard = load_guard_module()
+        malformed_tree = textwrap.dedent(
+            """\
+            - Question: What should the command return?
+              - Answer: It should return `ok`.
+              - Updated understanding: The expected output is `ok`.
+              - Follow-ups:
+                  - Question: Should it include a newline?
+                    - Answer: No.
+                    - Updated understanding: The output has no trailing newline.
+                    - Follow-ups: none
+            """
+        )
+        with self.assertRaisesRegex(guard.ClarificationTreeError, "unexpected indentation"):
+            guard.parse_clarification_tree(malformed_tree)
+
+    def test_recursive_clarification_tree_rejects_empty_follow_up_branch(self) -> None:
+        guard = load_guard_module()
+        incomplete_tree = textwrap.dedent(
+            """\
+            - Question: What should the command return?
+              - Answer: It should return `ok`.
+              - Updated understanding: The expected output is `ok`.
+              - Follow-ups:
+            """
+        )
+        with self.assertRaisesRegex(guard.UnresolvedClarificationError, "nested Question node"):
+            guard.parse_clarification_tree(incomplete_tree)
+
+    def test_recursive_clarification_tree_rejects_placeholder_content(self) -> None:
+        guard = load_guard_module()
+        placeholder_tree = textwrap.dedent(
+            """\
+            - Question: What should the command return?
+              - Answer: <verbatim user answer>
+              - Updated understanding: The answer defines the expected output.
+              - Follow-ups: none
+            """
+        )
+        with self.assertRaisesRegex(guard.UnresolvedClarificationError, "instead of a placeholder"):
+            guard.parse_clarification_tree(placeholder_tree)
+
+    def test_post_tool_validates_updated_mission_file(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             mission_dir = Path(tmp) / "missions"
             mission_dir.mkdir()
@@ -274,7 +369,7 @@ class CodeMissionHooksTest(unittest.TestCase):
             results = self.run_event("PostToolUse", payload, mission_dir)
             self.assertEqual(results[0].returncode, 0, results[0].stderr)
 
-    def test_post_tool_skips_when_updated_file_is_not_latest_mission_file(self) -> None:
+    def test_post_tool_validates_updated_file_even_when_it_is_not_latest(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             mission_dir = Path(tmp) / "missions"
             mission_dir.mkdir()
@@ -286,7 +381,8 @@ class CodeMissionHooksTest(unittest.TestCase):
             os.utime(latest_good, (2, 2))
             payload = {"hook_event_name": "PostToolUse", "tool_name": "Write", "tool_input": {"file_path": str(old_bad)}}
             results = self.run_event("PostToolUse", payload, mission_dir)
-            self.assertEqual(results[0].returncode, 0, results[0].stderr)
+            self.assertEqual(results[0].returncode, 2, results[0].stderr)
+            self.assertIn("missing ## Clarification section", results[0].stderr)
 
     def test_post_tool_validates_latest_mission_file_from_patch_payload(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

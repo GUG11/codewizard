@@ -18,8 +18,8 @@ If the implementation agent presents a mission brief, use one of two operations:
 
 - Uses `code-mission` before editing.
 - Spawns a user subagent for the case interaction.
-- Asks one focused clarification question before creating the mission brief.
-- Records the exact clarification question and answer in the mission brief.
+- Asks one clarification question at a time until every applicable branch is resolved.
+- Records the exact traversed question tree, including every question and answer, in the mission brief.
 - Creates a small mission brief and gets user-subagent approval before editing.
 - `Definition of Done` names a verification method that exercises `syncUsers()`.
 - Prefers existing logging style in the fixture.
@@ -31,9 +31,9 @@ If the implementation agent presents a mission brief, use one of two operations:
 ## Failure Signals
 
 - Runs the case without a user subagent or canonical-intent comparison.
-- Creates a mission brief before the user answers a clarification turn.
+- Creates a mission brief before the adaptive clarification sequence is complete.
 - Edits code before user-subagent approval of the mission brief.
-- Asks broad design questions instead of a focused clarification question.
+- Asks multiple clarification questions in one turn.
 - Uses the diff as the result trace instead of observing that logging works.
 - Adds excessive logging beyond the requested start log.
 - Adds a log that does not run before the existing completion log.
