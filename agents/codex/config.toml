@@ -1,6 +1,7 @@
 name = "codex"
 description = "Default Codex agent configuration"
-model = "gpt-5.5"
+model = "gpt-5.6-terra"
+model_reasoning_effort = "medium"
 
 approval_policy = "never"
 sandbox_mode = "danger-full-access"
